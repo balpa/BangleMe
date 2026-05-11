@@ -46,3 +46,9 @@ fastlane/test_output/
 # Env
 .env
 .env.local
+
+# Xcode user state
+xcuserdata/
+*.xcuserdatad/
+DerivedData/
+*.xcresult

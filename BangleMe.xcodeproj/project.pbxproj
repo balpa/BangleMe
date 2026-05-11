@@ -1,0 +1,495 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0491D8C2F5A1E8AF43A61619 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA79ED495D5F2AD81A9CCDD9 /* ContentView.swift */; };
+		1B1DD623B8BA2F0493E4B547 /* WristPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D16FA99D7219B7D40BFA970 /* WristPose.swift */; };
+		28C99D80A182252A04C14620 /* HandPoseDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04622C5138FFD5D6F7B2B592 /* HandPoseDetector.swift */; };
+		40D24FF77562274ADF17E4B0 /* WristPoseEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F553238B20FF55D1CE135B /* WristPoseEstimator.swift */; };
+		4DB388F5028096C2407DF31E /* DebugSphereOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A29E7EDABC7321BDD7266FC /* DebugSphereOverlay.swift */; };
+		4EA9E98CF809F31B718C8F21 /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85480699891C5BA1984ADF7 /* CameraPreviewView.swift */; };
+		6811E741CD9833D1F54EB749 /* BangleMeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE95AA6512832ED34DDE90E0 /* BangleMeApp.swift */; };
+		7750D9C82D37AEE99EE48768 /* TrackingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AACFF44632008B533CCCD3 /* TrackingState.swift */; };
+		8A71ADFBBA128D51F4B4A59C /* WristTrackingPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E91097C266FA7C2D6992CC0 /* WristTrackingPipeline.swift */; };
+		A7B42025D224BFD664333D58 /* WristPoseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8748876F88803B92A9C15BBC /* WristPoseTests.swift */; };
+		A8E8C316E65247C48BAF26F0 /* OneEuroFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FB9D7DCE0E607A7A58C99CE /* OneEuroFilter.swift */; };
+		B77110AC75D58CE79FA063BE /* OneEuroFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0386F42D4CA48A6C00099663 /* OneEuroFilterTests.swift */; };
+		C75B5D21C9C374F6E16ECB0F /* WristPoseEstimatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61940A9F9620167347FEBC15 /* WristPoseEstimatorTests.swift */; };
+		CE275AB56A482D4DD1207359 /* TrackingStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828815A1C10CDA5C06F69FAF /* TrackingStateTests.swift */; };
+		E922CE548E8B85DA2D6D2E67 /* CameraSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AE48D8F6BA7F4765EA06F4 /* CameraSession.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EF3AB7BB42B5959E49C64998 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6BDB84DBD98D9EB7BAF81211 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1E3E6122DB75C6D2CC94F856;
+			remoteInfo = BangleMe;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0386F42D4CA48A6C00099663 /* OneEuroFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneEuroFilterTests.swift; sourceTree = "<group>"; };
+		04622C5138FFD5D6F7B2B592 /* HandPoseDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandPoseDetector.swift; sourceTree = "<group>"; };
+		2E91097C266FA7C2D6992CC0 /* WristTrackingPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WristTrackingPipeline.swift; sourceTree = "<group>"; };
+		35AACFF44632008B533CCCD3 /* TrackingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingState.swift; sourceTree = "<group>"; };
+		3BBC6E69DA2315016E0CA0B4 /* BangleMeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BangleMeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D16FA99D7219B7D40BFA970 /* WristPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WristPose.swift; sourceTree = "<group>"; };
+		61940A9F9620167347FEBC15 /* WristPoseEstimatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WristPoseEstimatorTests.swift; sourceTree = "<group>"; };
+		66F553238B20FF55D1CE135B /* WristPoseEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WristPoseEstimator.swift; sourceTree = "<group>"; };
+		6B2BC5B0239F5CB5F6241255 /* BangleMe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BangleMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		828815A1C10CDA5C06F69FAF /* TrackingStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingStateTests.swift; sourceTree = "<group>"; };
+		8748876F88803B92A9C15BBC /* WristPoseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WristPoseTests.swift; sourceTree = "<group>"; };
+		8A29E7EDABC7321BDD7266FC /* DebugSphereOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSphereOverlay.swift; sourceTree = "<group>"; };
+		9FB9D7DCE0E607A7A58C99CE /* OneEuroFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneEuroFilter.swift; sourceTree = "<group>"; };
+		AA79ED495D5F2AD81A9CCDD9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		BE95AA6512832ED34DDE90E0 /* BangleMeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BangleMeApp.swift; sourceTree = "<group>"; };
+		D1AE48D8F6BA7F4765EA06F4 /* CameraSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSession.swift; sourceTree = "<group>"; };
+		F85480699891C5BA1984ADF7 /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0830CAA8B572C42599E7A58C /* App */ = {
+			isa = PBXGroup;
+			children = (
+				BE95AA6512832ED34DDE90E0 /* BangleMeApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		1EB39340C9AC2DFFFB6E4208 /* Tracking */ = {
+			isa = PBXGroup;
+			children = (
+				04622C5138FFD5D6F7B2B592 /* HandPoseDetector.swift */,
+				9FB9D7DCE0E607A7A58C99CE /* OneEuroFilter.swift */,
+				35AACFF44632008B533CCCD3 /* TrackingState.swift */,
+				3D16FA99D7219B7D40BFA970 /* WristPose.swift */,
+				66F553238B20FF55D1CE135B /* WristPoseEstimator.swift */,
+				2E91097C266FA7C2D6992CC0 /* WristTrackingPipeline.swift */,
+			);
+			path = Tracking;
+			sourceTree = "<group>";
+		};
+		3225B517B4A7F4C9D18BEB19 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6B2BC5B0239F5CB5F6241255 /* BangleMe.app */,
+				3BBC6E69DA2315016E0CA0B4 /* BangleMeTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		350316FEBF64040CD73367D7 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				AA79ED495D5F2AD81A9CCDD9 /* ContentView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		597FB9F4FCACB1CB15398451 /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				F85480699891C5BA1984ADF7 /* CameraPreviewView.swift */,
+				D1AE48D8F6BA7F4765EA06F4 /* CameraSession.swift */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
+		7605367D343DDB1809558A64 /* BangleMe */ = {
+			isa = PBXGroup;
+			children = (
+				0830CAA8B572C42599E7A58C /* App */,
+				597FB9F4FCACB1CB15398451 /* Camera */,
+				FA0F70115885B80B0863F8CE /* Debug */,
+				1EB39340C9AC2DFFFB6E4208 /* Tracking */,
+				350316FEBF64040CD73367D7 /* UI */,
+			);
+			path = BangleMe;
+			sourceTree = "<group>";
+		};
+		E708355CB66466232CDC9038 = {
+			isa = PBXGroup;
+			children = (
+				7605367D343DDB1809558A64 /* BangleMe */,
+				E85E6A88D44C8F2152D85D78 /* BangleMeTests */,
+				3225B517B4A7F4C9D18BEB19 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E85E6A88D44C8F2152D85D78 /* BangleMeTests */ = {
+			isa = PBXGroup;
+			children = (
+				0386F42D4CA48A6C00099663 /* OneEuroFilterTests.swift */,
+				828815A1C10CDA5C06F69FAF /* TrackingStateTests.swift */,
+				61940A9F9620167347FEBC15 /* WristPoseEstimatorTests.swift */,
+				8748876F88803B92A9C15BBC /* WristPoseTests.swift */,
+			);
+			path = BangleMeTests;
+			sourceTree = "<group>";
+		};
+		FA0F70115885B80B0863F8CE /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				8A29E7EDABC7321BDD7266FC /* DebugSphereOverlay.swift */,
+			);
+			path = Debug;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1E3E6122DB75C6D2CC94F856 /* BangleMe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC468D22FDC3002BEE3426B9 /* Build configuration list for PBXNativeTarget "BangleMe" */;
+			buildPhases = (
+				F3E83AFC09084A4D780518CE /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BangleMe;
+			packageProductDependencies = (
+			);
+			productName = BangleMe;
+			productReference = 6B2BC5B0239F5CB5F6241255 /* BangleMe.app */;
+			productType = "com.apple.product-type.application";
+		};
+		55878F2A856B4FCA8D623D2C /* BangleMeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 71458AB0A01EEFCF78117042 /* Build configuration list for PBXNativeTarget "BangleMeTests" */;
+			buildPhases = (
+				E26B47E4F4A4DC00BBDA0DF0 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8F3E0B9986041445811B8764 /* PBXTargetDependency */,
+			);
+			name = BangleMeTests;
+			packageProductDependencies = (
+			);
+			productName = BangleMeTests;
+			productReference = 3BBC6E69DA2315016E0CA0B4 /* BangleMeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6BDB84DBD98D9EB7BAF81211 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					1E3E6122DB75C6D2CC94F856 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					55878F2A856B4FCA8D623D2C = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = A2AE68BB4F838AE46B328735 /* Build configuration list for PBXProject "BangleMe" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E708355CB66466232CDC9038;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 3225B517B4A7F4C9D18BEB19 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1E3E6122DB75C6D2CC94F856 /* BangleMe */,
+				55878F2A856B4FCA8D623D2C /* BangleMeTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E26B47E4F4A4DC00BBDA0DF0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B77110AC75D58CE79FA063BE /* OneEuroFilterTests.swift in Sources */,
+				CE275AB56A482D4DD1207359 /* TrackingStateTests.swift in Sources */,
+				C75B5D21C9C374F6E16ECB0F /* WristPoseEstimatorTests.swift in Sources */,
+				A7B42025D224BFD664333D58 /* WristPoseTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3E83AFC09084A4D780518CE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6811E741CD9833D1F54EB749 /* BangleMeApp.swift in Sources */,
+				4EA9E98CF809F31B718C8F21 /* CameraPreviewView.swift in Sources */,
+				E922CE548E8B85DA2D6D2E67 /* CameraSession.swift in Sources */,
+				0491D8C2F5A1E8AF43A61619 /* ContentView.swift in Sources */,
+				4DB388F5028096C2407DF31E /* DebugSphereOverlay.swift in Sources */,
+				28C99D80A182252A04C14620 /* HandPoseDetector.swift in Sources */,
+				A8E8C316E65247C48BAF26F0 /* OneEuroFilter.swift in Sources */,
+				7750D9C82D37AEE99EE48768 /* TrackingState.swift in Sources */,
+				1B1DD623B8BA2F0493E4B547 /* WristPose.swift in Sources */,
+				40D24FF77562274ADF17E4B0 /* WristPoseEstimator.swift in Sources */,
+				8A71ADFBBA128D51F4B4A59C /* WristTrackingPipeline.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8F3E0B9986041445811B8764 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1E3E6122DB75C6D2CC94F856 /* BangleMe */;
+			targetProxy = EF3AB7BB42B5959E49C64998 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		3FC0403851BA2CD1794FDD88 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bangleme.app.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BangleMe.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BangleMe";
+			};
+			name = Debug;
+		};
+		8A153845138293076EFFF92A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B665F012732685E8842F6BCC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BangleMe/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bangleme.app;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B8F1BD42A8862B989BB1C06D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bangleme.app.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BangleMe.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BangleMe";
+			};
+			name = Release;
+		};
+		CE250DF103A81665D7E30219 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BangleMe/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bangleme.app;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F582C1439F82078E88720D93 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		71458AB0A01EEFCF78117042 /* Build configuration list for PBXNativeTarget "BangleMeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3FC0403851BA2CD1794FDD88 /* Debug */,
+				B8F1BD42A8862B989BB1C06D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A2AE68BB4F838AE46B328735 /* Build configuration list for PBXProject "BangleMe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F582C1439F82078E88720D93 /* Debug */,
+				8A153845138293076EFFF92A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BC468D22FDC3002BEE3426B9 /* Build configuration list for PBXNativeTarget "BangleMe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B665F012732685E8842F6BCC /* Debug */,
+				CE250DF103A81665D7E30219 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6BDB84DBD98D9EB7BAF81211 /* Project object */;
+}

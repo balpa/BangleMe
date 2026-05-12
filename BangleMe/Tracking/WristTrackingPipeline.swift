@@ -40,7 +40,7 @@ final class WristTrackingPipeline: ObservableObject {
     }
 
     private func process(pixelBuffer: CVPixelBuffer, timestamp: Double) {
-        let observations = detector.detect(pixelBuffer: pixelBuffer)
+        let observations = detector.detect(pixelBuffer: pixelBuffer, orientation: camera.visionOrientation)
 
         if estimator == nil {
             estimator = WristPoseEstimator(

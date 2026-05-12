@@ -1,6 +1,7 @@
 import Vision
 import CoreVideo
 import CoreGraphics
+import ImageIO
 import simd
 
 public struct HandObservation {
@@ -22,8 +23,8 @@ public final class HandPoseDetector {
         request.maximumHandCount = 2
     }
 
-    public func detect(pixelBuffer: CVPixelBuffer) -> [HandObservation] {
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .right, options: [:])
+    public func detect(pixelBuffer: CVPixelBuffer, orientation: CGImagePropertyOrientation = .right) -> [HandObservation] {
+        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: orientation, options: [:])
         do {
             try handler.perform([request])
         } catch {

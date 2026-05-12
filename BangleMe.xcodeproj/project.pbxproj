@@ -10,17 +10,25 @@
 		0491D8C2F5A1E8AF43A61619 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA79ED495D5F2AD81A9CCDD9 /* ContentView.swift */; };
 		1B1DD623B8BA2F0493E4B547 /* WristPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D16FA99D7219B7D40BFA970 /* WristPose.swift */; };
 		28C99D80A182252A04C14620 /* HandPoseDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04622C5138FFD5D6F7B2B592 /* HandPoseDetector.swift */; };
+		2B75134594EEC68FCEAB7A63 /* GoldMaterialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8B3231BFE168C1368FEA203 /* GoldMaterialTests.swift */; };
+		3948BCABF001AC8609A6A891 /* BraceletEntityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F091FE8BEDB2978715C5CA /* BraceletEntityTests.swift */; };
+		3DEFE9EFB8D67A57DF75F3E4 /* BraceletLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C67F6D44BF9A5F83BA7A649 /* BraceletLoader.swift */; };
 		40D24FF77562274ADF17E4B0 /* WristPoseEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F553238B20FF55D1CE135B /* WristPoseEstimator.swift */; };
 		4DB388F5028096C2407DF31E /* DebugSphereOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A29E7EDABC7321BDD7266FC /* DebugSphereOverlay.swift */; };
 		4EA9E98CF809F31B718C8F21 /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85480699891C5BA1984ADF7 /* CameraPreviewView.swift */; };
+		624EE68ED3B226788284EEA3 /* BraceletEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C61504F4EE33D210129B8FC0 /* BraceletEntity.swift */; };
 		6811E741CD9833D1F54EB749 /* BangleMeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE95AA6512832ED34DDE90E0 /* BangleMeApp.swift */; };
 		7750D9C82D37AEE99EE48768 /* TrackingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AACFF44632008B533CCCD3 /* TrackingState.swift */; };
 		8A71ADFBBA128D51F4B4A59C /* WristTrackingPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E91097C266FA7C2D6992CC0 /* WristTrackingPipeline.swift */; };
+		991C5A2965379206998FC775 /* BraceletLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B818DFAE27F3973FCDBB44C /* BraceletLoaderTests.swift */; };
+		A05188BEED2632C71CE02D51 /* BraceletSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04C32BF36783DDA7582EDCA /* BraceletSceneView.swift */; };
 		A7B42025D224BFD664333D58 /* WristPoseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8748876F88803B92A9C15BBC /* WristPoseTests.swift */; };
 		A8E8C316E65247C48BAF26F0 /* OneEuroFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FB9D7DCE0E607A7A58C99CE /* OneEuroFilter.swift */; };
 		B77110AC75D58CE79FA063BE /* OneEuroFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0386F42D4CA48A6C00099663 /* OneEuroFilterTests.swift */; };
 		C75B5D21C9C374F6E16ECB0F /* WristPoseEstimatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61940A9F9620167347FEBC15 /* WristPoseEstimatorTests.swift */; };
 		CE275AB56A482D4DD1207359 /* TrackingStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828815A1C10CDA5C06F69FAF /* TrackingStateTests.swift */; };
+		D1E94D35763A5F5364B104B6 /* BraceletScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D5B58B01E06A0C83BE9F70 /* BraceletScene.swift */; };
+		E546A640C431B6C5FFE2494C /* GoldMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CB52D729B9DA5B75013DA5 /* GoldMaterial.swift */; };
 		E922CE548E8B85DA2D6D2E67 /* CameraSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AE48D8F6BA7F4765EA06F4 /* CameraSession.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,21 +45,29 @@
 /* Begin PBXFileReference section */
 		0386F42D4CA48A6C00099663 /* OneEuroFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneEuroFilterTests.swift; sourceTree = "<group>"; };
 		04622C5138FFD5D6F7B2B592 /* HandPoseDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandPoseDetector.swift; sourceTree = "<group>"; };
+		0B818DFAE27F3973FCDBB44C /* BraceletLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BraceletLoaderTests.swift; sourceTree = "<group>"; };
 		2E91097C266FA7C2D6992CC0 /* WristTrackingPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WristTrackingPipeline.swift; sourceTree = "<group>"; };
 		35AACFF44632008B533CCCD3 /* TrackingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingState.swift; sourceTree = "<group>"; };
 		3BBC6E69DA2315016E0CA0B4 /* BangleMeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BangleMeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D16FA99D7219B7D40BFA970 /* WristPose.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WristPose.swift; sourceTree = "<group>"; };
+		46F091FE8BEDB2978715C5CA /* BraceletEntityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BraceletEntityTests.swift; sourceTree = "<group>"; };
 		61940A9F9620167347FEBC15 /* WristPoseEstimatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WristPoseEstimatorTests.swift; sourceTree = "<group>"; };
 		66F553238B20FF55D1CE135B /* WristPoseEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WristPoseEstimator.swift; sourceTree = "<group>"; };
 		6B2BC5B0239F5CB5F6241255 /* BangleMe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BangleMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6C67F6D44BF9A5F83BA7A649 /* BraceletLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BraceletLoader.swift; sourceTree = "<group>"; };
+		79CB52D729B9DA5B75013DA5 /* GoldMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoldMaterial.swift; sourceTree = "<group>"; };
 		828815A1C10CDA5C06F69FAF /* TrackingStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingStateTests.swift; sourceTree = "<group>"; };
 		8748876F88803B92A9C15BBC /* WristPoseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WristPoseTests.swift; sourceTree = "<group>"; };
+		88D5B58B01E06A0C83BE9F70 /* BraceletScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BraceletScene.swift; sourceTree = "<group>"; };
 		8A29E7EDABC7321BDD7266FC /* DebugSphereOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSphereOverlay.swift; sourceTree = "<group>"; };
 		9FB9D7DCE0E607A7A58C99CE /* OneEuroFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneEuroFilter.swift; sourceTree = "<group>"; };
+		A04C32BF36783DDA7582EDCA /* BraceletSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BraceletSceneView.swift; sourceTree = "<group>"; };
 		AA79ED495D5F2AD81A9CCDD9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		BE95AA6512832ED34DDE90E0 /* BangleMeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BangleMeApp.swift; sourceTree = "<group>"; };
+		C61504F4EE33D210129B8FC0 /* BraceletEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BraceletEntity.swift; sourceTree = "<group>"; };
 		D1AE48D8F6BA7F4765EA06F4 /* CameraSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSession.swift; sourceTree = "<group>"; };
 		F85480699891C5BA1984ADF7 /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
+		F8B3231BFE168C1368FEA203 /* GoldMaterialTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoldMaterialTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -93,6 +109,18 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
+		530F31A3DAE973DC67FC3B9A /* Render */ = {
+			isa = PBXGroup;
+			children = (
+				C61504F4EE33D210129B8FC0 /* BraceletEntity.swift */,
+				6C67F6D44BF9A5F83BA7A649 /* BraceletLoader.swift */,
+				88D5B58B01E06A0C83BE9F70 /* BraceletScene.swift */,
+				A04C32BF36783DDA7582EDCA /* BraceletSceneView.swift */,
+				79CB52D729B9DA5B75013DA5 /* GoldMaterial.swift */,
+			);
+			path = Render;
+			sourceTree = "<group>";
+		};
 		597FB9F4FCACB1CB15398451 /* Camera */ = {
 			isa = PBXGroup;
 			children = (
@@ -108,6 +136,7 @@
 				0830CAA8B572C42599E7A58C /* App */,
 				597FB9F4FCACB1CB15398451 /* Camera */,
 				FA0F70115885B80B0863F8CE /* Debug */,
+				530F31A3DAE973DC67FC3B9A /* Render */,
 				1EB39340C9AC2DFFFB6E4208 /* Tracking */,
 				350316FEBF64040CD73367D7 /* UI */,
 			);
@@ -126,6 +155,9 @@
 		E85E6A88D44C8F2152D85D78 /* BangleMeTests */ = {
 			isa = PBXGroup;
 			children = (
+				46F091FE8BEDB2978715C5CA /* BraceletEntityTests.swift */,
+				0B818DFAE27F3973FCDBB44C /* BraceletLoaderTests.swift */,
+				F8B3231BFE168C1368FEA203 /* GoldMaterialTests.swift */,
 				0386F42D4CA48A6C00099663 /* OneEuroFilterTests.swift */,
 				828815A1C10CDA5C06F69FAF /* TrackingStateTests.swift */,
 				61940A9F9620167347FEBC15 /* WristPoseEstimatorTests.swift */,
@@ -224,6 +256,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3948BCABF001AC8609A6A891 /* BraceletEntityTests.swift in Sources */,
+				991C5A2965379206998FC775 /* BraceletLoaderTests.swift in Sources */,
+				2B75134594EEC68FCEAB7A63 /* GoldMaterialTests.swift in Sources */,
 				B77110AC75D58CE79FA063BE /* OneEuroFilterTests.swift in Sources */,
 				CE275AB56A482D4DD1207359 /* TrackingStateTests.swift in Sources */,
 				C75B5D21C9C374F6E16ECB0F /* WristPoseEstimatorTests.swift in Sources */,
@@ -236,10 +271,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				6811E741CD9833D1F54EB749 /* BangleMeApp.swift in Sources */,
+				624EE68ED3B226788284EEA3 /* BraceletEntity.swift in Sources */,
+				3DEFE9EFB8D67A57DF75F3E4 /* BraceletLoader.swift in Sources */,
+				D1E94D35763A5F5364B104B6 /* BraceletScene.swift in Sources */,
+				A05188BEED2632C71CE02D51 /* BraceletSceneView.swift in Sources */,
 				4EA9E98CF809F31B718C8F21 /* CameraPreviewView.swift in Sources */,
 				E922CE548E8B85DA2D6D2E67 /* CameraSession.swift in Sources */,
 				0491D8C2F5A1E8AF43A61619 /* ContentView.swift in Sources */,
 				4DB388F5028096C2407DF31E /* DebugSphereOverlay.swift in Sources */,
+				E546A640C431B6C5FFE2494C /* GoldMaterial.swift in Sources */,
 				28C99D80A182252A04C14620 /* HandPoseDetector.swift in Sources */,
 				A8E8C316E65247C48BAF26F0 /* OneEuroFilter.swift in Sources */,
 				7750D9C82D37AEE99EE48768 /* TrackingState.swift in Sources */,

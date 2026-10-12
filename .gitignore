@@ -52,3 +52,6 @@ xcuserdata/
 *.xcuserdatad/
 DerivedData/
 *.xcresult
+
+# Unity project: its Packages/ holds the package manifest, not Swift Package Manager checkouts
+!/BangleMeUnity/Packages/

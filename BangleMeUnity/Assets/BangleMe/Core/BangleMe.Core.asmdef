@@ -1,0 +1,6 @@
+{
+    "name": "BangleMe.Core",
+    "rootNamespace": "BangleMe",
+    "references": [],
+    "autoReferenced": true
+}

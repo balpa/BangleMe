@@ -1,0 +1,31 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Style src="TryOn.uss" />
+    <ui:VisualElement name="root" class="screen" picking-mode="Ignore">
+        <ui:VisualElement name="topBar" class="top-bar" picking-mode="Ignore">
+            <ui:Label text="BangleMe" class="wordmark" picking-mode="Ignore" />
+            <ui:Button name="cameraButton" text="Kamerayı çevir" class="pill-button" />
+        </ui:VisualElement>
+        <ui:VisualElement class="hint-area" picking-mode="Ignore">
+            <ui:Label name="hint" text="Bileğini kameraya göster" class="hint" picking-mode="Ignore" />
+        </ui:VisualElement>
+        <ui:VisualElement name="sheet" class="sheet">
+            <ui:Button name="sheetHandle" class="sheet-handle-button">
+                <ui:VisualElement class="sheet-handle" picking-mode="Ignore" />
+            </ui:Button>
+            <ui:VisualElement class="sheet-row">
+                <ui:VisualElement name="finishes" class="finishes" />
+                <ui:VisualElement class="stepper">
+                    <ui:RepeatButton name="removeButton" text="−" delay="400" interval="90" class="stepper-button" />
+                    <ui:Label name="countLabel" text="1" class="count" />
+                    <ui:RepeatButton name="addButton" text="+" delay="400" interval="90" class="stepper-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:ScrollView name="designs" mode="Horizontal" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" class="carousel" />
+            <ui:VisualElement class="sheet-row sheet-row--last">
+                <ui:Label text="Bolluk" class="slider-label" />
+                <ui:Slider name="loosenessSlider" class="looseness-slider" />
+                <ui:Button name="clearButton" text="Temizle" class="text-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

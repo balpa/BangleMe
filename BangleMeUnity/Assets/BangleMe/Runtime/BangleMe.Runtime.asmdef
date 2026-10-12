@@ -1,0 +1,9 @@
+{
+    "name": "BangleMe.Runtime",
+    "rootNamespace": "BangleMe",
+    "references": [
+        "BangleMe.Core",
+        "Mediapipe.Runtime"
+    ],
+    "autoReferenced": true
+}

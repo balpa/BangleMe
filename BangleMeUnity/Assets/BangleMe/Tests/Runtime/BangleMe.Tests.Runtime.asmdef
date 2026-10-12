@@ -1,0 +1,17 @@
+{
+    "name": "BangleMe.Tests.Runtime",
+    "rootNamespace": "BangleMe.Tests",
+    "references": [
+        "BangleMe.Core",
+        "BangleMe.Runtime",
+        "UnityEngine.TestRunner"
+    ],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ]
+}

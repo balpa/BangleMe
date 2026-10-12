@@ -1,0 +1,14 @@
+{
+    "name": "BangleMe.Editor",
+    "rootNamespace": "BangleMe.Editor",
+    "references": [
+        "BangleMe.Core",
+        "BangleMe.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "autoReferenced": false
+}

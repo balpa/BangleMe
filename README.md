@@ -2,7 +2,35 @@
 
 iOS AR app — the user points their phone's camera at their arm, picks a gold bracelet from the bottom carousel, and sees it on their wrist in hyper-realistic detail. A social-media-filter-style entertainment app.
 
-## Status
+## Unity port (iOS + Android)
+
+Development moved to Unity so the app can be built on Windows and shipped to both stores. The project lives in `BangleMeUnity/`; the Swift sources below are kept as the reference implementation.
+
+- Unity 6000.6.3f1, URP, with Android and iOS Build Support modules
+- Hand tracking: [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin) 0.16.3 (Hand Landmarker)
+- Camera: `WebCamTexture`, so the USB webcam works in the Editor's Play mode
+
+Setup after cloning:
+
+1. Run `BangleMeUnity/tools/fetch-mediapipe.ps1` (Windows) or `fetch-mediapipe.sh` (macOS). The plugin tarball is too large for git.
+2. Open `BangleMeUnity` in Unity Hub, open `Assets/BangleMe/Scenes/Main.unity`, press Play.
+
+Editor menu `BangleMe`:
+
+- **Rebuild Main Scene** regenerates the scene, materials and player settings from `Assets/BangleMe/Editor/ProjectSetup.cs`.
+- **Render Preview From Photo** renders the bracelets over the test photo, and over any photos you drop into `BangleMeUnity/PreviewPhotos/` (not tracked by git), into `Logs/BangleMePreview/`.
+- **Build → Android APK** writes `Builds/Android/BangleMe.apk`.
+- **Build → iOS Xcode Project** writes `Builds/iOS`; run it on the Mac, then sign and upload from Xcode.
+
+Tests: Window → General → Test Runner, or `unity test BangleMeUnity --mode EditMode` / `--mode PlayMode`. The PlayMode test runs the real scene on a photo and writes screenshots with the UI to `Logs/BangleMePreview/`. Command-line runs need the project closed in the Editor.
+
+How it fits the wrist: MediaPipe gives the hand's 21 landmarks; `WristMeasurer` then finds the forearm's edges in the camera image behind the wrist, so the bracelets take the arm's real width, direction and taper (`WristFitEstimator`). Up to 50 bracelets stack from the wrist toward the elbow.
+
+Bracelet designs (`BraceletDesign.Catalog`) are generated in code: twisted-wire burma, and swept bands (ajda, hasır, tıraşlı, düz) detailed by generated normal maps.
+
+Credits: reflection environment `Assets/BangleMe/Environment/Studio.hdr` is "Studio Small 09" from Poly Haven (CC0). Test photos are from the MediaPipe sample assets.
+
+## Status (Swift)
 
 Foundation in place. Plan 1 (camera + wrist tracking) is implemented and committed; on-device verification pending an iOS platform install. Plans 2–6 still to come.
 

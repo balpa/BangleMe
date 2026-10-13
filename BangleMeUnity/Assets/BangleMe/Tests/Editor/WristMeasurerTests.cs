@@ -218,5 +218,50 @@ namespace BangleMe.Tests
 
             Assert.IsFalse(WristMeasurer.Measure(pixels, Width, Height, image, world).Valid);
         }
+
+        [Test]
+        public void ArmInShadowBehindALitHand_IsStillMeasured()
+        {
+            var (image, world) = BuildHand();
+            var pixels = Paint(_ => 160f, _ => 28f, 60f, Background);
+
+            var measurement = WristMeasurer.Measure(pixels, Width, Height, image, world);
+
+            Assert.IsTrue(measurement.Valid);
+            Assert.AreEqual(56f, measurement.Width, 3f);
+        }
+
+        // Covers the rows one scan line samples with a patch that is not skin.
+        static void PaintMark(byte[] pixels, int row, int fromX, int toX)
+        {
+            for (var y = row - 3; y <= row + 3; y++)
+            {
+                for (var x = fromX; x <= toX; x++)
+                {
+                    var offset = (y * Width + x) * 4;
+                    pixels[offset] = Background.r;
+                    pixels[offset + 1] = Background.g;
+                    pixels[offset + 2] = Background.b;
+                }
+            }
+        }
+
+        // The scan lines 45mm and 85mm behind the wrist cross rows 165 and 205, where a mark stops
+        // them 7px from the center line instead of at the outline.
+        [Test]
+        public void MarksOnTheArm_DoNotNarrowItsWidth()
+        {
+            var (image, world) = BuildHand();
+            var clean = Paint(_ => 160f, _ => 28f);
+            var marked = Paint(_ => 160f, _ => 28f);
+            PaintMark(marked, 165, 168, 174);
+            PaintMark(marked, 205, 168, 174);
+
+            var unmarkedWidth = WristMeasurer.Measure(clean, Width, Height, image, world).Width;
+            var measurement = WristMeasurer.Measure(marked, Width, Height, image, world);
+
+            Assert.IsTrue(measurement.Valid);
+            Assert.AreEqual(unmarkedWidth, measurement.Width, 1.5f);
+        }
     }
 }

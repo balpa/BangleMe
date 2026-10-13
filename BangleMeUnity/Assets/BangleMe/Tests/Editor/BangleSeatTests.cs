@@ -38,5 +38,21 @@ namespace BangleMe.Tests
         {
             Assert.AreEqual(0f, BangleSeat.At(0.03f, 0.035f, 0.03f, Vector3.left).Hang.x, 1e-6f);
         }
+
+        [Test]
+        public void GravityAlongTheArmsDepth_HangsTheBangleByTheDepthSlack()
+        {
+            var seat = BangleSeat.At(0.03f, 0.024f, 0.02f, Vector3.forward);
+
+            Assert.AreEqual(0.01f, seat.Hang.y, 1e-6f);
+        }
+
+        [Test]
+        public void VeryLooseBangle_LeansNoFurtherThanTheCap()
+        {
+            var seat = BangleSeat.At(0.03f, 0.015f, 0.015f, Vector3.left);
+
+            Assert.AreEqual(1.6f, seat.TiltScale, 1e-6f);
+        }
     }
 }

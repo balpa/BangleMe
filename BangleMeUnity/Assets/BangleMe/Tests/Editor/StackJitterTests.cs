@@ -80,6 +80,20 @@ namespace BangleMe.Tests
         }
 
         [Test]
+        public void FreerBangles_LeanFurther()
+        {
+            for (var index = 0; index < 50; index++)
+            {
+                if (StackJitter.IsCrosser(index) || StackJitter.IsCrosser(index, 1f)) continue;
+                var settled = StackJitter.At(index).TiltDegrees;
+                var free = StackJitter.At(index, 1f).TiltDegrees;
+
+                Assert.AreEqual(settled.x * 1.6f, free.x, 1e-4f);
+                Assert.AreEqual(settled.y * 1.6f, free.y, 1e-4f);
+            }
+        }
+
+        [Test]
         public void Stack_DoesNotLeanAsOne()
         {
             var min = float.MaxValue;

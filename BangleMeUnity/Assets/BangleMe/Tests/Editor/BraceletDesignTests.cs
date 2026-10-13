@@ -25,5 +25,15 @@ namespace BangleMe.Tests
                 Assert.AreEqual(finish.Name == "Mat", finish.Plain, finish.Name);
             }
         }
+
+        [TestCase("Tıraşlı", 0f)]
+        [TestCase("İnce", 0.68f)]
+        [TestCase("Yassı", 0.92f)]
+        public void Freedom_GrowsAsTheBangleGetsThinner(string name, float expected)
+        {
+            var design = System.Array.Find(BraceletDesign.Catalog, candidate => candidate.Name == name);
+
+            Assert.AreEqual(expected, design.Freedom, 0.001f);
+        }
     }
 }

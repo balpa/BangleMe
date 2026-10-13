@@ -58,6 +58,7 @@ namespace BangleMe.Tests
                 // Not a budget check (the editor on a desktop says little about a phone), but a
                 // full stack suddenly costing several times more shows up here first.
                 stack.Add(BraceletDesign.Catalog.Length - 1, BraceletStack.MaxCount);
+                Assert.AreEqual(BraceletStack.MaxCount, stack.Count);
                 for (var frame = 0; frame < 10; frame++) yield return null;
                 var started = Time.realtimeSinceStartupAsDouble;
                 const int timedFrames = 60;

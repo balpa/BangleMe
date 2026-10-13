@@ -84,6 +84,20 @@ namespace BangleMe.Tests
             Assert.AreEqual(0f, Lean(measurement), 0.03f);
         }
 
+        // The heel of the hand reaches 3cm past the wrist and is 80px wide, so only the scan line
+        // nearest the hand crosses it.
+        [Test]
+        public void HeelOfTheHandOnTheFirstLine_DoesNotWidenTheArm()
+        {
+            var (image, world) = BuildHand();
+            var pixels = Paint(_ => 160f, y => y < 150 ? 40f : 28f);
+
+            var measurement = WristMeasurer.Measure(pixels, Width, Height, image, world);
+
+            Assert.IsTrue(measurement.Valid);
+            Assert.AreEqual(56f, measurement.Width, 3f);
+        }
+
         [Test]
         public void ShiftedArm_ReportsItsOffset()
         {

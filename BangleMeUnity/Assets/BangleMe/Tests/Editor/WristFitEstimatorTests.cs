@@ -51,6 +51,16 @@ namespace BangleMe.Tests
             Assert.AreEqual(0f, fit.Position.y, 0.0005f);
         }
 
+        // Down the image is toward the elbow, which is down in camera space.
+        [Test]
+        public void Offset_ShiftsAlongTheArm()
+        {
+            var measurement = new WristMeasurement(new Vector2(0f, 0.01f * PixelsPerMeter), Vector2.up, 0.06f * PixelsPerMeter, 0f);
+            var fit = new WristFitEstimator().Estimate(Pose, measurement, 0, FocalLengthPx);
+
+            Assert.AreEqual(-0.01f, fit.Position.y, 0.0005f);
+        }
+
         [Test]
         public void Direction_TurnsTheArmAxis()
         {

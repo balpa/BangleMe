@@ -80,7 +80,8 @@ namespace BangleMe.Tests
                     Show(0);
                     yield return null;
                     still.Add(ScreenX());
-                    sizes.Add(stack.transform.GetChild(0).localScale.x);
+                    // The stack's first child is the arm stand-in, whose scale never changes.
+                    sizes.Add(stack.transform.Find("Bracelet 1").localScale.x);
                 }
                 var rest = Mean(still);
                 var jitter = Deviation(still);

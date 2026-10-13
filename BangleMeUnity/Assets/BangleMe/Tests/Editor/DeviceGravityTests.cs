@@ -36,6 +36,13 @@ namespace BangleMe.Tests
             AssertDirection(Vector3.down, DeviceGravity.InView(new Vector3(1, 0, 0), ScreenOrientation.LandscapeRight, false));
         }
 
+        // Held upside down the phone's top edge points at the floor: gravity pulls along its +Y.
+        [Test]
+        public void PhoneUpsideDown_DownIsStillDownTheImage()
+        {
+            AssertDirection(Vector3.down, DeviceGravity.InView(new Vector3(0, 1, 0), ScreenOrientation.PortraitUpsideDown, false));
+        }
+
         [Test]
         public void NoReading_FallsBackToDownTheImage()
         {

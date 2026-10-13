@@ -28,6 +28,13 @@ namespace BangleMe
         public bool DidUpdateThisFrame { get; private set; }
         public bool IsMirrored { get; private set; }
         public string Error { get; private set; }
+        // Field of view along the image's longer side, or 0 when the platform does not say.
+        public float LongSideFovDegrees { get; private set; }
+
+#if UNITY_IOS && !UNITY_EDITOR
+        [System.Runtime.InteropServices.DllImport("__Internal")]
+        static extern float BangleMeCameraFieldOfView(bool frontFacing);
+#endif
 
         IEnumerator Start()
         {
@@ -107,6 +114,14 @@ namespace BangleMe
                 Error = "Kamera başlatılamadı";
                 StopDevice();
             }
+#if UNITY_IOS && !UNITY_EDITOR
+            else if (webCamTexture != null)
+            {
+                // Read once the session runs: the format, and with it the field of view, is
+                // only chosen then.
+                LongSideFovDegrees = BangleMeCameraFieldOfView(device.isFrontFacing);
+            }
+#endif
             restarting = false;
         }
 
@@ -163,6 +178,7 @@ namespace BangleMe
 
         void StopDevice()
         {
+            LongSideFovDegrees = 0f;
             if (webCamTexture != null)
             {
                 webCamTexture.Stop();

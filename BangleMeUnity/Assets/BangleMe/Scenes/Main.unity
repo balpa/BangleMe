@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &347825678
+--- !u!1 &212113060
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,9 +127,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 347825679}
-  - component: {fileID: 347825681}
-  - component: {fileID: 347825680}
+  - component: {fileID: 212113061}
+  - component: {fileID: 212113062}
+  - component: {fileID: 212113063}
   m_Layer: 0
   m_Name: AR Camera
   m_TagString: MainCamera
@@ -137,46 +137,32 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &347825679
+--- !u!4 &212113061
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 347825678}
+  m_GameObject: {fileID: 212113060}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 813751405}
-  - {fileID: 895944722}
+  - {fileID: 1905534072}
+  - {fileID: 1884474885}
+  - {fileID: 2130221650}
+  - {fileID: 1007648003}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &347825680
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 347825678}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84dd5f7574ef22047ba57db437659b69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: BangleMe.Runtime::BangleMe.ArCameraRig
-  renderCamera: {fileID: 347825681}
-  background: {fileID: 813751406}
-  assumedLongSideFovDegrees: 65
-  backgroundDistance: 20
---- !u!20 &347825681
+--- !u!20 &212113062
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 347825678}
+  m_GameObject: {fileID: 212113060}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -209,7 +195,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294967231
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -221,7 +207,23 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!1 &378062514
+--- !u!114 &212113063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212113060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84dd5f7574ef22047ba57db437659b69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BangleMe.Runtime::BangleMe.ArCameraRig
+  renderCamera: {fileID: 212113062}
+  background: {fileID: 1905534073}
+  assumedLongSideFovDegrees: 65
+  backgroundDistance: 20
+--- !u!1 &917809201
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -229,9 +231,181 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 378062517}
-  - component: {fileID: 378062516}
-  - component: {fileID: 378062515}
+  - component: {fileID: 917809205}
+  - component: {fileID: 917809202}
+  - component: {fileID: 917809204}
+  - component: {fileID: 917809203}
+  m_Layer: 0
+  m_Name: App
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &917809202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917809201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87cd57d4d1c62834e830717eae096162, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BangleMe.Runtime::BangleMe.CameraFeed
+  blitShader: {fileID: 4800000, guid: 90b0b3a36cff4464cb7ac3bc5118516b, type: 3}
+  preferFrontFacing: 0
+  mirrorOnDesktop: 1
+  requestedWidth: 1280
+  requestedHeight: 720
+  requestedFps: 60
+  stillImage: {fileID: 0}
+--- !u!114 &917809203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917809201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6c4ee6b62eb64a40a6ec13a71550a81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BangleMe.Runtime::BangleMe.WristTrackingPipeline
+  cameraFeed: {fileID: 917809202}
+  cameraRig: {fileID: 212113063}
+  braceletStack: {fileID: 1007648002}
+  handLandmarkerModel: {fileID: 4900000, guid: 6db8846d13e6d3848a016d3d1db4bd9a, type: 3}
+  keyLight: {fileID: 1793088475}
+  sceneReflection: {fileID: 917809204}
+  positionMinCutoff: 5
+  positionBeta: 15
+  rotationMinCutoff: 2
+  rotationBeta: 1.5
+  darkSceneReflections: 0.55
+  brightSceneReflections: 1.25
+  keyLightIntensity: 2.6
+  assumedLightDirection: {x: 0, y: 0.5, z: -0.85}
+  shadingToSideways: 4
+  hardLightBoost: 1.5
+--- !u!114 &917809204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917809201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 275105f4209eb44bfaaf3b0730f77ec1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BangleMe.Runtime::BangleMe.SceneReflection
+  shader: {fileID: 4800000, guid: 06be5c00931284c028f44681b1e25fac, type: 3}
+  studio: {fileID: 8900000, guid: 0276d364aa8c221409ecd823ed2b4a21, type: 3}
+  faceSize: 256
+  sceneGain: 0.85
+  studioGain: 0.1
+  lightGain: 1
+  softKey: 3.5
+  hardKey: 5.5
+  softFill: 1.3
+  hardFill: 0.25
+  rim: 1.5
+  keyCore: 1.2
+  metalInSurroundings: 0.85
+  skinInSurroundings: {r: 1, g: 0.88, b: 0.78, a: 1}
+  neighbourLevel: 0.26
+  behindLevel: 0.5
+  interreflectionTint: {r: 0.8, g: 0.42, b: 0.16, a: 1}
+  minKeyAzimuth: 0.4
+  maxKeyAzimuth: 1.1
+--- !u!4 &917809205
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917809201}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1007648001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1007648003}
+  - component: {fileID: 1007648002}
+  m_Layer: 0
+  m_Name: Bracelets
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1007648002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1007648001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ac4b87916250c54586dd3e5b16d5418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BangleMe.Runtime::BangleMe.BraceletStack
+  designMaterials:
+  - {fileID: 2100000, guid: d9cc5b8cdad492e489887ae21c564e1e, type: 2}
+  - {fileID: 2100000, guid: 1aa70e6e8043f5d478e96422263d7904, type: 2}
+  - {fileID: 2100000, guid: 26b033ef52a53ba44b7bc92685b43beb, type: 2}
+  - {fileID: 2100000, guid: 995e8d397f4c23e43b48d32ca10bd5d5, type: 2}
+  - {fileID: 2100000, guid: 86a4c467492a8e345ac9197c7ce76d27, type: 2}
+  - {fileID: 2100000, guid: 0611bc9c64ac52644a15c6d61446b79d, type: 2}
+  - {fileID: 2100000, guid: eb2b70d3736b143bb9b1347f2760add0, type: 2}
+  - {fileID: 2100000, guid: 358d78c9be6ee4478915bfbbe4af50f1, type: 2}
+  - {fileID: 2100000, guid: 25563abe440aa4867a45fad9152b6148, type: 2}
+  occluderMaterial: {fileID: 2100000, guid: f7c4e249c6e1ced449b890dd34e34e58, type: 2}
+  initialDesign: 0
+  looseness: 1
+  occludeBehindWrist: 1
+  wristOffset: 0.026
+  gapBetweenBracelets: 0.0002
+--- !u!4 &1007648003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1007648001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 212113061}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1792893770
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1792893773}
+  - component: {fileID: 1792893772}
+  - component: {fileID: 1792893771}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -239,21 +413,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &378062515
+--- !u!114 &1792893771
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378062514}
+  m_GameObject: {fileID: 1792893770}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b451f56518ba5f43892a889d8ebcf31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BangleMe.Runtime::BangleMe.TryOnScreen
-  pipeline: {fileID: 1146525026}
-  braceletStack: {fileID: 895944721}
-  cameraFeed: {fileID: 1146525025}
+  pipeline: {fileID: 917809203}
+  braceletStack: {fileID: 1007648002}
+  cameraFeed: {fileID: 917809202}
   designThumbnails:
   - {fileID: 2800000, guid: 99dee1fccadfce449a83b0bd54d6855a, type: 3}
   - {fileID: 2800000, guid: c534c9906f4636e4a883dd986e717823, type: 3}
@@ -261,13 +435,16 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 70b8dd08460f4a74ca28f873deeb8283, type: 3}
   - {fileID: 2800000, guid: 61aa21e3ae3117d42b8fcca74a0677dd, type: 3}
   - {fileID: 2800000, guid: 274cbba8ecbb04540a6acab1374a36f4, type: 3}
---- !u!114 &378062516
+  - {fileID: 2800000, guid: 363083f7e13374e21acf5db449a71946, type: 3}
+  - {fileID: 2800000, guid: cc648f9415ae3477f90c433d87d7fd48, type: 3}
+  - {fileID: 2800000, guid: 2bc4171f418074810ac47743303d3567, type: 3}
+--- !u!114 &1792893772
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378062514}
+  m_GameObject: {fileID: 1792893770}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
@@ -284,13 +461,13 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!4 &378062517
+--- !u!4 &1792893773
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378062514}
+  m_GameObject: {fileID: 1792893770}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -299,7 +476,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &428989185
+--- !u!1 &1793088474
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -307,9 +484,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 428989188}
-  - component: {fileID: 428989186}
-  - component: {fileID: 428989187}
+  - component: {fileID: 1793088477}
+  - component: {fileID: 1793088475}
+  - component: {fileID: 1793088476}
   m_Layer: 0
   m_Name: Key Light
   m_TagString: Untagged
@@ -317,13 +494,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!108 &428989186
+--- !u!108 &1793088475
 Light:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 428989185}
+  m_GameObject: {fileID: 1793088474}
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 1
@@ -331,7 +508,7 @@ Light:
   m_Intensity: 1.2
   m_Range: 10
   m_SpotAngle: 30
-  m_InnerSpotAngle: 21.80208
+  m_InnerSpotAngle: 21.802082
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 0
@@ -382,13 +559,13 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!114 &428989187
+--- !u!114 &1793088476
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 428989185}
+  m_GameObject: {fileID: 1793088474}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
@@ -411,13 +588,13 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!4 &428989188
+--- !u!4 &1793088477
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 428989185}
+  m_GameObject: {fileID: 1793088474}
   serializedVersion: 2
   m_LocalRotation: {x: 0.3303661, y: -0.24321036, z: 0.08852133, w: 0.9076734}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -426,7 +603,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &813751404
+--- !u!1 &1884474884
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -434,9 +611,109 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 813751405}
-  - component: {fileID: 813751407}
-  - component: {fileID: 813751406}
+  - component: {fileID: 1884474885}
+  - component: {fileID: 1884474887}
+  - component: {fileID: 1884474886}
+  m_Layer: 0
+  m_Name: Bracelet Layer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1884474885
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1884474884}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 212113061}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1884474886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1884474884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cacf9ab24ec214f1189ffd81d71617be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BangleMe.Runtime::BangleMe.BraceletLayer
+  sceneCamera: {fileID: 212113062}
+  composite: {fileID: 2130221651}
+  blurPerThousandPixels: 0.25
+  grain: 0.03
+--- !u!20 &1884474887
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1884474884}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 192
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 0
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!1 &1905534071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1905534072}
+  - component: {fileID: 1905534074}
+  - component: {fileID: 1905534073}
   m_Layer: 0
   m_Name: Camera Background
   m_TagString: Untagged
@@ -444,28 +721,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &813751405
+--- !u!4 &1905534072
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 813751404}
+  m_GameObject: {fileID: 1905534071}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 347825679}
+  m_Father: {fileID: 212113061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &813751406
+--- !u!23 &1905534073
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 813751404}
+  m_GameObject: {fileID: 1905534071}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -508,15 +785,15 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &813751407
+--- !u!33 &1905534074
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 813751404}
+  m_GameObject: {fileID: 1905534071}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &895944720
+--- !u!1 &2130221649
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -524,136 +801,93 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 895944722}
-  - component: {fileID: 895944721}
+  - component: {fileID: 2130221650}
+  - component: {fileID: 2130221652}
+  - component: {fileID: 2130221651}
   m_Layer: 0
-  m_Name: Bracelets
+  m_Name: Bracelet Composite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &895944721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 895944720}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ac4b87916250c54586dd3e5b16d5418, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: BangleMe.Runtime::BangleMe.BraceletStack
-  designMaterials:
-  - {fileID: 2100000, guid: d9cc5b8cdad492e489887ae21c564e1e, type: 2}
-  - {fileID: 2100000, guid: 1aa70e6e8043f5d478e96422263d7904, type: 2}
-  - {fileID: 2100000, guid: 26b033ef52a53ba44b7bc92685b43beb, type: 2}
-  - {fileID: 2100000, guid: 995e8d397f4c23e43b48d32ca10bd5d5, type: 2}
-  - {fileID: 2100000, guid: 86a4c467492a8e345ac9197c7ce76d27, type: 2}
-  - {fileID: 2100000, guid: 0611bc9c64ac52644a15c6d61446b79d, type: 2}
-  occluderMaterial: {fileID: 2100000, guid: f7c4e249c6e1ced449b890dd34e34e58, type: 2}
-  initialDesign: 0
-  looseness: 1
-  occludeBehindWrist: 1
-  wristOffset: 0.026
-  gapBetweenBracelets: 0.0006
---- !u!4 &895944722
+--- !u!4 &2130221650
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 895944720}
+  m_GameObject: {fileID: 2130221649}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalScale: {x: 100, y: 100, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 347825679}
+  m_Father: {fileID: 212113061}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1146525024
-GameObject:
+--- !u!23 &2130221651
+MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1146525027}
-  - component: {fileID: 1146525025}
-  - component: {fileID: 1146525026}
-  m_Layer: 0
-  m_Name: App
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1146525025
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1146525024}
+  m_GameObject: {fileID: 2130221649}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87cd57d4d1c62834e830717eae096162, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: BangleMe.Runtime::BangleMe.CameraFeed
-  blitShader: {fileID: 4800000, guid: 90b0b3a36cff4464cb7ac3bc5118516b, type: 3}
-  preferFrontFacing: 0
-  mirrorOnDesktop: 1
-  requestedWidth: 1280
-  requestedHeight: 720
-  requestedFps: 60
-  stillImage: {fileID: 0}
---- !u!114 &1146525026
-MonoBehaviour:
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: b4db0d2f2a9e74b90a7f9256308657bc, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &2130221652
+MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1146525024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6c4ee6b62eb64a40a6ec13a71550a81, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: BangleMe.Runtime::BangleMe.WristTrackingPipeline
-  cameraFeed: {fileID: 1146525025}
-  cameraRig: {fileID: 347825680}
-  braceletStack: {fileID: 895944721}
-  handLandmarkerModel: {fileID: 4900000, guid: 6db8846d13e6d3848a016d3d1db4bd9a, type: 3}
-  keyLight: {fileID: 428989186}
-  positionMinCutoff: 1.5
-  positionBeta: 15
-  rotationMinCutoff: 2
-  rotationBeta: 1.5
-  darkSceneReflections: 0.55
-  brightSceneReflections: 1.25
-  keyLightIntensity: 1.2
---- !u!4 &1146525027
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1146525024}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 2130221649}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 428989188}
-  - {fileID: 347825679}
-  - {fileID: 1146525027}
-  - {fileID: 378062517}
+  - {fileID: 1793088477}
+  - {fileID: 212113061}
+  - {fileID: 917809205}
+  - {fileID: 1792893773}

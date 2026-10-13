@@ -18,6 +18,7 @@
                     <ui:RepeatButton name="removeButton" text="−" delay="400" interval="90" class="stepper-button" />
                     <ui:Label name="countLabel" text="1" class="count" />
                     <ui:RepeatButton name="addButton" text="+" delay="400" interval="90" class="stepper-button" />
+                    <ui:Button name="setButton" text="+12" class="stepper-button stepper-button--set" />
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:ScrollView name="designs" mode="Horizontal" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" class="carousel" />

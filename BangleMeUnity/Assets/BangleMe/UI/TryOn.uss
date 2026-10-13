@@ -151,6 +151,12 @@
     transition-duration: 0.1s;
 }
 
+.stepper-button--set {
+    width: 52px;
+    font-size: 15px;
+    -unity-font-style: bold;
+}
+
 .stepper-button:active {
     background-color: rgba(212, 176, 56, 0.45);
 }

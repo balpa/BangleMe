@@ -55,6 +55,17 @@ namespace BangleMe.Tests
 
                 SaveScreenshot(sceneTarget, uiTarget, "screen");
 
+                // Not a budget check (the editor on a desktop says little about a phone), but a
+                // full stack suddenly costing several times more shows up here first.
+                stack.Add(BraceletDesign.Catalog.Length - 1, BraceletStack.MaxCount);
+                for (var frame = 0; frame < 10; frame++) yield return null;
+                var started = Time.realtimeSinceStartupAsDouble;
+                const int timedFrames = 60;
+                for (var frame = 0; frame < timedFrames; frame++) yield return null;
+                var milliseconds = (Time.realtimeSinceStartupAsDouble - started) * 1000.0 / timedFrames;
+                Debug.Log($"[BangleMe] {stack.Count} bracelets: {milliseconds:0.00} ms per frame in the editor");
+                SaveScreenshot(sceneTarget, uiTarget, "screen_full_stack");
+
                 var root = Object.FindFirstObjectByType<UIDocument>().rootVisualElement;
                 root.Q("sheet").AddToClassList("sheet--collapsed");
                 for (var frame = 0; frame < 5; frame++) yield return null;

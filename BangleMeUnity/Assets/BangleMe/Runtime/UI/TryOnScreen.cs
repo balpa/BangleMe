@@ -13,6 +13,7 @@ namespace BangleMe
         const string SelectedChipClass = "finish-chip--selected";
         const string VisibleHintClass = "hint--visible";
         const string CollapsedSheetClass = "sheet--collapsed";
+        const int SetSize = 12;
 
         [SerializeField] WristTrackingPipeline pipeline;
         [SerializeField] BraceletStack braceletStack;
@@ -44,6 +45,7 @@ namespace BangleMe
             root.Q<Button>("clearButton").clicked += braceletStack.Clear;
             root.Q<RepeatButton>("addButton").SetAction(() => braceletStack.Add(braceletStack.LastDesign), 400, 90);
             root.Q<RepeatButton>("removeButton").SetAction(braceletStack.RemoveLast, 400, 90);
+            root.Q<Button>("setButton").clicked += () => braceletStack.AddSet(SetSize);
 
             var slider = root.Q<Slider>("loosenessSlider");
             slider.lowValue = BraceletStack.MinLooseness;

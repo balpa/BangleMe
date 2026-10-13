@@ -12,6 +12,8 @@ namespace BangleMe.Tests
 
         static readonly Color32 Skin = new Color32(214, 160, 130, 255);
         static readonly Color32 Background = new Color32(40, 70, 150, 255);
+        // Skin in its own shadow: far darker, nearly the same chroma.
+        static readonly Color32 ShadedSkin = new Color32(128, 78, 52, 255);
 
         // Fingers up: wrist at (160, 120), knuckles 90px above it, so the forearm runs down.
         static (Vector2[] image, Vector3[] world) BuildHand()
@@ -36,6 +38,12 @@ namespace BangleMe.Tests
         // Palm block above the wrist, then an arm whose center and half width are given per row.
         static byte[] Paint(System.Func<int, float> armCenter, System.Func<int, float> armHalfWidth)
         {
+            return Paint(armCenter, armHalfWidth, 0f, Background);
+        }
+
+        // shadedWidth: pixels along the arm's +X edge painted as its shadow side.
+        static byte[] Paint(System.Func<int, float> armCenter, System.Func<int, float> armHalfWidth, float shadedWidth, Color32 background)
+        {
             var pixels = new byte[Width * Height * 4];
             for (var y = 0; y < Height; y++)
             {
@@ -44,7 +52,8 @@ namespace BangleMe.Tests
                     var skin = y < 125
                         ? y > 20 && Mathf.Abs(x - 165) < 45
                         : Mathf.Abs(x - armCenter(y)) < armHalfWidth(y);
-                    var color = skin ? Skin : Background;
+                    var color = skin ? Skin : background;
+                    if (skin && y >= 125 && x - armCenter(y) > armHalfWidth(y) - shadedWidth) color = ShadedSkin;
                     var offset = (y * Width + x) * 4;
                     pixels[offset] = color.r;
                     pixels[offset + 1] = color.g;
@@ -53,6 +62,12 @@ namespace BangleMe.Tests
                 }
             }
             return pixels;
+        }
+
+        // Angle of the measured arm from straight down the image, positive toward +X.
+        static float Lean(WristMeasurement measurement)
+        {
+            return Mathf.Atan2(measurement.Direction.x, measurement.Direction.y);
         }
 
         [Test]
@@ -64,15 +79,13 @@ namespace BangleMe.Tests
             var measurement = WristMeasurer.Measure(pixels, Width, Height, image, world);
 
             Assert.IsTrue(measurement.Valid);
-            Assert.AreEqual(0.056f, measurement.WidthMeters, 0.003f);
-            Assert.AreEqual(0f, measurement.LateralMeters, 0.002f);
-            Assert.AreEqual(0f, measurement.BendRadians, 0.03f);
+            Assert.AreEqual(56f, measurement.Width, 3f);
+            Assert.AreEqual(0f, measurement.Offset.x, 2f);
+            Assert.AreEqual(0f, Lean(measurement), 0.03f);
         }
 
-        // The arm axis points down the image (+Y), so its perpendicular (-axis.y, axis.x) is -X:
-        // an arm shifted toward +X measures a negative lateral offset.
         [Test]
-        public void ShiftedArm_ReportsLateralOffset()
+        public void ShiftedArm_ReportsItsOffset()
         {
             var (image, world) = BuildHand();
             var pixels = Paint(_ => 172f, _ => 28f);
@@ -80,11 +93,11 @@ namespace BangleMe.Tests
             var measurement = WristMeasurer.Measure(pixels, Width, Height, image, world);
 
             Assert.IsTrue(measurement.Valid);
-            Assert.AreEqual(-0.012f, measurement.LateralMeters, 0.002f);
+            Assert.AreEqual(12f, measurement.Offset.x, 2f);
         }
 
         [Test]
-        public void SlantedArm_ReportsBend()
+        public void SlantedArm_ReportsItsDirection()
         {
             var (image, world) = BuildHand();
             // Drifts 0.3px toward +X per row below the wrist.
@@ -93,7 +106,22 @@ namespace BangleMe.Tests
             var measurement = WristMeasurer.Measure(pixels, Width, Height, image, world);
 
             Assert.IsTrue(measurement.Valid);
-            Assert.AreEqual(-Mathf.Atan(0.3f), measurement.BendRadians, 0.05f);
+            Assert.AreEqual(Mathf.Atan(0.3f), Lean(measurement), 0.05f);
+        }
+
+        // A wrist bent 40 degrees: the arm is 56mm wide, but a row of the image crosses 73mm of it.
+        [Test]
+        public void BentWrist_MeasuresAcrossTheArmNotAcrossTheHand()
+        {
+            var (image, world) = BuildHand();
+            var slope = Mathf.Tan(40f * Mathf.Deg2Rad);
+            var pixels = Paint(y => 160f + (y - 120) * slope, _ => 28f / Mathf.Cos(40f * Mathf.Deg2Rad));
+
+            var measurement = WristMeasurer.Measure(pixels, Width, Height, image, world);
+
+            Assert.IsTrue(measurement.Valid);
+            Assert.AreEqual(40f * Mathf.Deg2Rad, Lean(measurement), 0.06f);
+            Assert.AreEqual(56f, measurement.Width, 5f);
         }
 
         [Test]
@@ -106,6 +134,66 @@ namespace BangleMe.Tests
 
             Assert.IsTrue(measurement.Valid);
             Assert.AreEqual(0.2f, measurement.WidthGrowth, 0.05f);
+        }
+
+        [Test]
+        public void ShadedSide_StillMeasuresTheWholeArm()
+        {
+            var (image, world) = BuildHand();
+            var pixels = Paint(_ => 160f, _ => 28f, 10f, Background);
+
+            var measurement = WristMeasurer.Measure(pixels, Width, Height, image, world);
+
+            Assert.IsTrue(measurement.Valid);
+            Assert.AreEqual(56f, measurement.Width, 3f);
+            Assert.AreEqual(0f, measurement.Offset.x, 2f);
+        }
+
+        [Test]
+        public void ShadedSide_PointsTheShadingAtTheLitSide()
+        {
+            var (image, world) = BuildHand();
+            var pixels = Paint(_ => 160f, _ => 28f, 22f, Background);
+
+            var measurement = WristMeasurer.Measure(pixels, Width, Height, image, world);
+
+            Assert.IsTrue(measurement.Valid);
+            Assert.Less(measurement.Shading.x, -0.2f, "the +X side is in shadow, so the light is at -X");
+            Assert.AreEqual(0f, measurement.Shading.y, 0.05f);
+        }
+
+        [Test]
+        public void EvenlyLitArm_HasNoShading()
+        {
+            var (image, world) = BuildHand();
+            var pixels = Paint(_ => 160f, _ => 28f);
+
+            Assert.AreEqual(0f, WristMeasurer.Measure(pixels, Width, Height, image, world).Shading.magnitude, 0.02f);
+        }
+
+        [Test]
+        public void DarkSkinTonedBackground_FallsBackToTheBrightnessEdge()
+        {
+            var (image, world) = BuildHand();
+            var pixels = Paint(_ => 160f, _ => 28f, 0f, ShadedSkin);
+
+            var measurement = WristMeasurer.Measure(pixels, Width, Height, image, world);
+
+            Assert.IsTrue(measurement.Valid);
+            Assert.AreEqual(56f, measurement.Width, 3f);
+        }
+
+        [Test]
+        public void ArmCutOffBehindTheWrist_StillMeasuresItsWidth()
+        {
+            var (image, world) = BuildHand();
+            var pixels = Paint(_ => 160f, y => y < 152 ? 28f : 0f);
+
+            var measurement = WristMeasurer.Measure(pixels, Width, Height, image, world);
+
+            Assert.IsTrue(measurement.Valid);
+            Assert.AreEqual(56f, measurement.Width, 3f);
+            Assert.AreEqual(0f, Lean(measurement), 0.03f);
         }
 
         [Test]

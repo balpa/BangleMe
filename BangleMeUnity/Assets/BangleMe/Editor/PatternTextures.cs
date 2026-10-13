@@ -29,6 +29,64 @@ namespace BangleMe.Editor
             return (AssetDatabase.LoadAssetAtPath<Texture2D>(normalPath), AssetDatabase.LoadAssetAtPath<Texture2D>(occlusionPath));
         }
 
+        // For plain bands, which have no pattern but still darken toward their edges.
+        public static Texture2D GetOrCreateEdgeOcclusion(string directory)
+        {
+            var path = $"{directory}/Edge Occlusion.png";
+            if (!File.Exists(path))
+            {
+                var flat = new float[Size, Size];
+                for (var y = 0; y < Size; y++)
+                {
+                    for (var x = 0; x < Size; x++) flat[x, y] = 1f;
+                }
+                File.WriteAllBytes(path, EncodeOcclusion(flat));
+                AssetDatabase.ImportAsset(path);
+                Configure(path, TextureImporterType.Default);
+            }
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        }
+
+        // Hand-polished metal carries fine scratches running around the bangle. Without them a
+        // plain band mirrors its surroundings like chrome plastic.
+        public static Texture2D GetOrCreateBrushedNormal(string directory)
+        {
+            var path = $"{directory}/Brushed Normal.png";
+            if (!File.Exists(path))
+            {
+                var height = new float[Size, Size];
+                for (var y = 0; y < Size; y++)
+                {
+                    var line = Hash(y * 7919) * 0.6f + Hash(y / 3 * 104729) * 0.4f;
+                    for (var x = 0; x < Size; x++)
+                    {
+                        // Each scratch fades in and out along its length.
+                        var along = 0.5f + 0.5f * Mathf.Sin((x / (float)Size + Hash(y * 31)) * Mathf.PI * 2f * (1 + y % 3));
+                        height[x, y] = line * Mathf.Lerp(0.55f, 1f, along);
+                    }
+                }
+                File.WriteAllBytes(path, EncodeNormals(height, 1.6f));
+                AssetDatabase.ImportAsset(path);
+                Configure(path, TextureImporterType.NormalMap);
+                var importer = (TextureImporter)AssetImporter.GetAtPath(path);
+                importer.wrapModeV = TextureWrapMode.Repeat;
+                importer.SaveAndReimport();
+            }
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        }
+
+        static float Hash(int value)
+        {
+            unchecked
+            {
+                var hash = (uint)value * 0x9E3779B1u;
+                hash ^= hash >> 15;
+                hash *= 0x2C1B3C6Du;
+                hash ^= hash >> 12;
+                return (hash & 0xFFFFFF) / (float)0xFFFFFF;
+            }
+        }
+
         static void Configure(string path, TextureImporterType type)
         {
             var importer = (TextureImporter)AssetImporter.GetAtPath(path);
@@ -54,6 +112,10 @@ namespace BangleMe.Editor
                 case BandPattern.Weave:
                     function = Weave;
                     strength = 7f;
+                    break;
+                case BandPattern.Beads:
+                    function = Beads;
+                    strength = 14f;
                     break;
                 default:
                     function = Emboss;
@@ -100,6 +162,14 @@ namespace BangleMe.Editor
             return strand * Mathf.Pow(Mathf.Sin(Mathf.PI * across), 0.6f);
         }
 
+        // A row of small round beads along the bangle, one per repeat.
+        static float Beads(float u, float v)
+        {
+            var x = (u - 0.5f) * 2f;
+            var y = (v - 0.5f) * 2f;
+            return Mathf.Sqrt(Mathf.Max(0f, 1f - (x * x + y * y) / 0.6f));
+        }
+
         // Pressed lattice of soft diamonds on the dome of an ajda bangle.
         static float Emboss(float u, float v)
         {
@@ -138,15 +208,17 @@ namespace BangleMe.Editor
             return Encode(pixels);
         }
 
-        // Grooves catch less of the surroundings than raised parts do.
+        // Grooves catch less of the surroundings than raised parts do, and so do the edges of a
+        // band: they face the neighbouring bangle or the skin rather than the room.
         static byte[] EncodeOcclusion(float[,] height)
         {
             var pixels = new Color[Size * Size];
             for (var y = 0; y < Size; y++)
             {
+                var edge = Mathf.Lerp(0.3f, 1f, Mathf.SmoothStep(0f, 1f, Window((y + 0.5f) / Size, 0.24f)));
                 for (var x = 0; x < Size; x++)
                 {
-                    var value = Mathf.Lerp(0.35f, 1f, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(height[x, y] / 0.6f)));
+                    var value = edge * Mathf.Lerp(0.35f, 1f, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(height[x, y] / 0.6f)));
                     pixels[y * Size + x] = new Color(value, value, value, 1f);
                 }
             }

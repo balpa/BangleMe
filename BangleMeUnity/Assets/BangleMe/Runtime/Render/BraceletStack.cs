@@ -20,11 +20,21 @@ namespace BangleMe
         const float HandFlarePerMeter = 9f;
         // Past this the arm is the elbow; bracelets that would sit beyond it are not drawn.
         const float MaxArmLength = 0.26f;
+        // The first bangles stand off the skin, so seen at an angle their shadow starts a little
+        // way in from where they do.
+        const float ShadowInset = 0.006f;
+        // Bangles worn together are close to one size, so on an arm that widens they cannot all
+        // hug it: the size is set by the widest place they reach, and they sit loose before it.
+        const float SharedSizeShare = 0.45f;
+        const float GravityAcceleration = 9.81f;
+        // A frame that took longer than this is a stall, not motion to catch up on.
+        const float MaxStepSeconds = 0.1f;
 
         static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
         static readonly int SmoothnessId = Shader.PropertyToID("_Smoothness");
         static readonly int StackStartId = Shader.PropertyToID("_StackStart");
         static readonly int StackEndId = Shader.PropertyToID("_StackEnd");
+        static readonly int LightAlongId = Shader.PropertyToID("_LightAlong");
 
         [Tooltip("One material per entry of BraceletDesign.Catalog.")]
         [SerializeField] Material[] designMaterials;
@@ -36,11 +46,17 @@ namespace BangleMe
         [Header("Placement (meters)")]
         [Tooltip("How far up the forearm from the wrist joint the first bracelet sits.")]
         [SerializeField] float wristOffset = 0.026f;
-        [SerializeField] float gapBetweenBracelets = 0.0006f;
+        [SerializeField] float gapBetweenBracelets = 0.0002f;
 
         readonly List<int> designs = new List<int>();
         readonly List<MeshRenderer> renderers = new List<MeshRenderer>();
         readonly Dictionary<int, Mesh> meshCache = new Dictionary<int, Mesh>();
+        BangleSlideSolver slide;
+        float[] homes = Array.Empty<float>();
+        float[] widths = Array.Empty<float>();
+        float[] radii = Array.Empty<float>();
+        float[] lowest = Array.Empty<float>();
+        float[] highest = Array.Empty<float>();
         MaterialPropertyBlock finishBlock;
         MaterialPropertyBlock occluderBlock;
         MeshRenderer occluder;
@@ -52,7 +68,18 @@ namespace BangleMe
 
         public event Action Changed;
 
+        public Color FinishColor => BraceletFinish.Catalog[finishIndex].Color;
+
+        // Toward the main light, in the space of this object's parent (the camera).
+        public Vector3 LightDirection { get; set; } = Vector3.up;
+
+        // Which way things fall, in the space of this object's parent (the camera).
+        public Vector3 Gravity { get; set; } = Vector3.down;
+
         public int Count => designs.Count;
+
+        // 0 for a bangle on its own, 1 once it has a neighbour on either side.
+        public float Crowding => Mathf.Clamp01((designs.Count - 1) * 0.5f);
         public int LastDesign => designs.Count > 0 ? designs[designs.Count - 1] : initialDesign;
 
         public int FinishIndex
@@ -77,10 +104,24 @@ namespace BangleMe
             designs.Add(Mathf.Clamp(initialDesign, 0, BraceletDesign.Catalog.Length - 1));
         }
 
-        public void Add(int designIndex)
+        public void Add(int designIndex, int count = 1)
         {
-            if (designs.Count >= MaxCount) return;
-            designs.Add(Mathf.Clamp(designIndex, 0, BraceletDesign.Catalog.Length - 1));
+            count = Mathf.Min(count, MaxCount - designs.Count);
+            if (count <= 0) return;
+            var design = Mathf.Clamp(designIndex, 0, BraceletDesign.Catalog.Length - 1);
+            for (var i = 0; i < count; i++) designs.Add(design);
+            MarkChanged();
+        }
+
+        // A set is what one buys together: plain and beaded thin bangles mixed, or more of the
+        // same for every other design.
+        public void AddSet(int count)
+        {
+            count = Mathf.Min(count, MaxCount - designs.Count);
+            if (count <= 0) return;
+            var last = LastDesign;
+            var mixed = BraceletDesign.IsThinSet(last);
+            for (var i = 0; i < count; i++) designs.Add(mixed ? BraceletDesign.ThinSetDesign(designs.Count) : last);
             MarkChanged();
         }
 
@@ -97,30 +138,90 @@ namespace BangleMe
             MarkChanged();
         }
 
-        public void Apply(WristFit fit, bool visible)
+        // seconds: how much time the bangles get to slide; the last frame's when left out.
+        public void Apply(WristFit fit, bool visible, float seconds = -1f)
         {
             if (dirty) Rebuild();
 
             transform.localPosition = fit.Position;
             transform.localRotation = fit.Rotation;
 
-            var distance = wristOffset;
+            var gravity = Quaternion.Inverse(fit.Rotation) * Gravity.normalized;
+            var thicknessRatio = fit.HalfThickness / fit.HalfWidth;
+
+            Measure(fit);
+            if (seconds < 0f) seconds = Application.isPlaying ? Mathf.Min(Time.deltaTime, MaxStepSeconds) : 0f;
+            var press = new Vector2(gravity.x, gravity.z).magnitude * GravityAcceleration;
+            slide.Step(seconds, widths, lowest, highest, gravity.y * GravityAcceleration, press);
+
+            var stackStart = wristOffset;
+            var stackEnd = wristOffset;
             for (var i = 0; i < designs.Count; i++)
             {
-                var width = BraceletDesign.Catalog[designs[i]].Width;
-                var center = distance + width * 0.5f;
-                distance += width + gapBetweenBracelets;
+                var design = BraceletDesign.Catalog[designs[i]];
+                var center = slide.Along(i);
+                if (i == 0) stackStart = center - design.Width * 0.5f;
+                stackEnd = center + design.Width * 0.5f;
 
                 var ring = renderers[i];
-                ring.enabled = visible && distance < MaxArmLength;
-                var radial = fit.HalfWidthAt(center) * looseness / BraceletMeshFactory.ReferenceInnerRadius;
-                ring.transform.localPosition = Vector3.up * center;
+                ring.enabled = visible && stackEnd < MaxArmLength;
+                var jitter = StackJitter.At(i, design.Freedom);
+                var armHalfWidth = HandHalfWidthAt(fit, center);
+                var seat = BangleSeat.At(radii[i], armHalfWidth, armHalfWidth * thicknessRatio, gravity);
+                var radial = radii[i] / BraceletMeshFactory.ReferenceInnerRadius;
+                ring.transform.localPosition = new Vector3(jitter.ShiftMeters.x + seat.Hang.x, center, jitter.ShiftMeters.y + seat.Hang.y);
+                ring.transform.localRotation = Quaternion.Euler(jitter.TiltDegrees.x * seat.TiltScale, 0f, jitter.TiltDegrees.y * seat.TiltScale)
+                                             * Quaternion.AngleAxis(jitter.SpinDegrees, Vector3.up);
                 ring.transform.localScale = new Vector3(radial, 1f, radial);
             }
 
-            var stackEnd = Mathf.Min(distance, MaxArmLength);
             occluder.enabled = visible && occludeBehindWrist && designs.Count > 0;
-            if (occluder.enabled) UpdateOccluder(fit, stackEnd);
+            if (occluder.enabled) UpdateOccluder(fit, stackStart, Mathf.Min(stackEnd, MaxArmLength));
+        }
+
+        // Each bangle's size, and from that how far it can travel: toward the hand until the heel
+        // of the hand is as wide as it is, toward the elbow until the arm is.
+        void Measure(WristFit fit)
+        {
+            var count = designs.Count;
+            if (homes.Length != count)
+            {
+                homes = new float[count];
+                widths = new float[count];
+                radii = new float[count];
+                lowest = new float[count];
+                highest = new float[count];
+            }
+
+            var distance = wristOffset;
+            for (var i = 0; i < count; i++)
+            {
+                widths[i] = BraceletDesign.Catalog[designs[i]].Width;
+                homes[i] = distance + widths[i] * 0.5f;
+                distance += widths[i] + gapBetweenBracelets;
+            }
+            var widestHalfWidth = fit.HalfWidthAt(Mathf.Min(distance, MaxArmLength));
+
+            for (var i = 0; i < count; i++)
+            {
+                var jitter = StackJitter.At(i, BraceletDesign.Catalog[designs[i]].Freedom);
+                radii[i] = Mathf.Lerp(fit.HalfWidthAt(homes[i]), widestHalfWidth, SharedSizeShare) * looseness * jitter.RadiusScale;
+
+                var room = Mathf.Max(0f, radii[i] / fit.HalfWidth - 1f);
+                lowest[i] = Mathf.Min(homes[i], wristOffset * 0.5f - room / HandFlarePerMeter);
+                highest[i] = fit.GrowthPerMeter > 1e-4f
+                    ? Mathf.Max(homes[i], WristMeasurement.ReferenceDistanceMeters + room / fit.GrowthPerMeter)
+                    : MaxArmLength;
+            }
+
+            slide ??= new BangleSlideSolver(gapBetweenBracelets);
+            if (slide.Count != count) slide.Resize(homes);
+        }
+
+        // The arm's half width with the heel of the hand, which flares out from the wrist.
+        float HandHalfWidthAt(WristFit fit, float distanceFromWrist)
+        {
+            return fit.HalfWidthAt(distanceFromWrist) * (1f + HandFlarePerMeter * Mathf.Max(0f, wristOffset * 0.5f - distanceFromWrist));
         }
 
         void Rebuild()
@@ -131,7 +232,7 @@ namespace BangleMe
 
             while (renderers.Count < designs.Count)
             {
-                renderers.Add(CreateChild($"Bracelet {renderers.Count + 1}"));
+                renderers.Add(CreateChild($"Bracelet {renderers.Count + 1}", RenderLayers.Bracelets));
             }
 
             var highDetail = designs.Count <= HighDetailLimit;
@@ -145,11 +246,13 @@ namespace BangleMe
                     continue;
                 }
 
-                var design = BraceletDesign.Catalog[designs[i]];
-                ring.GetComponent<MeshFilter>().sharedMesh = MeshFor(designs[i], highDetail);
-                ring.sharedMaterial = designMaterials[designs[i]];
-                finishBlock.SetColor(BaseColorId, finish.Color);
-                finishBlock.SetFloat(SmoothnessId, design.Smoothness * finish.SmoothnessScale);
+                var shown = finish.Plain ? BraceletDesign.PlainOf(designs[i]) : designs[i];
+                var design = BraceletDesign.Catalog[shown];
+                ring.GetComponent<MeshFilter>().sharedMesh = MeshFor(shown, highDetail);
+                ring.sharedMaterial = designMaterials[shown];
+                var jitter = StackJitter.At(i);
+                finishBlock.SetColor(BaseColorId, finish.Color * jitter.Tone);
+                finishBlock.SetFloat(SmoothnessId, design.Smoothness * finish.SmoothnessScale * jitter.Polish);
                 ring.SetPropertyBlock(finishBlock);
             }
         }
@@ -167,7 +270,7 @@ namespace BangleMe
 
         void CreateOccluder()
         {
-            occluder = CreateChild("Arm Occluder");
+            occluder = CreateChild("Arm Occluder", RenderLayers.ArmOccluder);
             occluder.sharedMaterial = occluderMaterial;
             occluderBlock = new MaterialPropertyBlock();
 
@@ -186,7 +289,7 @@ namespace BangleMe
 
         // Stands in for the arm: hides the far half of each bracelet and carries the contact
         // shadow, so it has to follow the measured arm rather than a fixed shape.
-        void UpdateOccluder(WristFit fit, float stackEnd)
+        void UpdateOccluder(WristFit fit, float stackStart, float stackEnd)
         {
             var start = -HandSideLength;
             var end = stackEnd + OccluderMargin;
@@ -198,7 +301,7 @@ namespace BangleMe
                 for (var j = 0; j <= OccluderRings; j++)
                 {
                     var y = Mathf.Lerp(start, end, j / (float)OccluderRings);
-                    var halfWidth = fit.HalfWidthAt(y) * (1f + HandFlarePerMeter * Mathf.Max(0f, wristOffset * 0.5f - y));
+                    var halfWidth = HandHalfWidthAt(fit, y);
                     var halfThickness = halfWidth * fit.HalfThickness / fit.HalfWidth;
                     var index = i * (OccluderRings + 1) + j;
                     occluderVertices[index] = new Vector3(cos * halfWidth, y, sin * halfThickness);
@@ -210,14 +313,15 @@ namespace BangleMe
             occluderMesh.SetNormals(occluderNormals);
             occluderMesh.RecalculateBounds();
 
-            occluderBlock.SetFloat(StackStartId, wristOffset);
+            occluderBlock.SetFloat(StackStartId, stackStart + ShadowInset);
             occluderBlock.SetFloat(StackEndId, stackEnd);
+            occluderBlock.SetFloat(LightAlongId, Vector3.Dot(fit.Rotation * Vector3.up, LightDirection));
             occluder.SetPropertyBlock(occluderBlock);
         }
 
-        MeshRenderer CreateChild(string childName)
+        MeshRenderer CreateChild(string childName, int layer)
         {
-            var child = new GameObject(childName);
+            var child = new GameObject(childName) { layer = layer };
             child.transform.SetParent(transform, false);
             child.AddComponent<MeshFilter>();
             var meshRenderer = child.AddComponent<MeshRenderer>();

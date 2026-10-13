@@ -3,7 +3,8 @@
     "rootNamespace": "BangleMe",
     "references": [
         "BangleMe.Core",
-        "Mediapipe.Runtime"
+        "Mediapipe.Runtime",
+        "Unity.InputSystem"
     ],
     "autoReferenced": true
 }

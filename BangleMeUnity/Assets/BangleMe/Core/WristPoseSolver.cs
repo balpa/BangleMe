@@ -26,12 +26,12 @@ namespace BangleMe
                 return WristPose.Identity;
             }
 
-            var wrist = ToCameraSpace(worldPoints[HandLandmark.Wrist], translation);
+            var wrist = OnImageRay(imagePoints[HandLandmark.Wrist], worldPoints[HandLandmark.Wrist].z + translation.z);
             var indexMcp = ToCameraSpace(worldPoints[HandLandmark.IndexMcp], translation);
             var middleMcp = ToCameraSpace(worldPoints[HandLandmark.MiddleMcp], translation);
             var pinkyMcp = ToCameraSpace(worldPoints[HandLandmark.PinkyMcp], translation);
 
-            var forearm = wrist - middleMcp;
+            var forearm = ToCameraSpace(worldPoints[HandLandmark.Wrist], translation) - middleMcp;
             var across = indexMcp - pinkyMcp;
             var palmNormal = Vector3.Cross(forearm, across);
             if (forearm.sqrMagnitude < 1e-8f || palmNormal.sqrMagnitude < 1e-12f)
@@ -80,6 +80,16 @@ namespace BangleMe
 
             translation = new Vector3((float)tx, (float)ty, (float)tz);
             return true;
+        }
+
+        // The fit spreads its error over the whole hand, and the tracker's metric hand rarely
+        // matches the image exactly; the bracelets hang off the wrist, so the wrist takes its depth
+        // from the fit but sits exactly where the image shows it.
+        Vector3 OnImageRay(Vector2 imagePoint, float depth)
+        {
+            var u = (imagePoint.x - 0.5f) * ImageSize.x;
+            var v = (imagePoint.y - 0.5f) * ImageSize.y;
+            return new Vector3(u * depth / FocalLengthPx, -v * depth / FocalLengthPx, depth);
         }
 
         static Vector3 ToCameraSpace(Vector3 worldPoint, Vector3 translation)

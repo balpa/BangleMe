@@ -27,11 +27,26 @@ namespace BangleMe
         // Shading changes skin's brightness far more than its chroma.
         const float LumaWeight = 0.6f;
 
-        // Past these the scan has left bare skin: a sleeve, a watch, another object.
         const float MaxCenterColorChange = 45f;
-        const float MaxWidthChange = 0.35f;
+        const float MaxHandChromaChange = 22f;
+        const int MaxMissedLines = 2;
+        // How far from the center line toward each edge the skin's brightness is compared.
+        const float ShadingSampleFraction = 0.6f;
+        const int EnvelopePasses = 3;
+        // Fraction of the arm's width, and at least this many pixels.
+        const float EnvelopeTolerance = 0.04f;
+        const float MinEnvelopeTolerancePx = 1.5f;
+        const int MinLinesWithoutHand = 5;
+        const float HandOutlierTolerances = 3f;
 
-        static readonly float[] ScanDistancesMeters = { 0.025f, 0.035f, 0.045f, 0.055f, 0.07f, 0.085f, 0.10f, 0.12f };
+        // Positive turns toward the perpendicular (-axis.y, axis.x) of the hand axis.
+        static readonly float[] AxisTurnsDegrees = { 0f, 25f, -25f, 50f, -50f };
+        // A turned scan has nothing but the image to vouch for it, so it needs more of the arm.
+        const int MinLinesOffAxis = 4;
+        const float SkewPenaltyPerRadian = 6f;
+        const int EnoughLines = 6;
+
+        static readonly float[] ScanDistancesMeters = { 0.025f, 0.035f, 0.045f, 0.055f, 0.07f, 0.085f, 0.10f, 0.12f, 0.14f, 0.16f };
 
         // rgba: rows top-down. imagePoints: normalized, origin top-left. worldPoints: meters.
         public static WristMeasurement Measure(ReadOnlySpan<byte> rgba, int width, int height, Vector2[] imagePoints, Vector3[] worldPoints)
@@ -46,54 +61,153 @@ namespace BangleMe
             if (handPixels < 8f || handMeters < 0.02f) return default;
 
             var pixelsPerMeter = handPixels / handMeters;
-            var axis = (wrist - knuckle) / handPixels;
+            var handAxis = (wrist - knuckle) / handPixels;
+
+            // A straight wrist is the common case and the hand axis already runs down the arm.
+            // Bent back or forward, the arm leaves that line within a few centimeters, so the
+            // scan is retried along directions turned away from the hand.
+            var handSkin = SampleYcc(rgba, width, height, Vector2.Lerp(wrist, knuckle, 0.3f));
+            var best = default(WristMeasurement);
+            var bestScore = float.NegativeInfinity;
+            foreach (var turnDegrees in AxisTurnsDegrees)
+            {
+                var turn = turnDegrees * Mathf.Deg2Rad;
+                var lines = MeasureAlong(rgba, width, height, wrist, handAxis, turn, handSkin, pixelsPerMeter, out var measurement, out var skew);
+                if (lines < (turnDegrees == 0f ? 1 : MinLinesOffAxis)) continue;
+
+                // The scan that runs most squarely across the arm sees its true width.
+                // Past a handful, more lines only mean the arm stayed in the frame for longer.
+                var score = Mathf.Min(lines, EnoughLines) - SkewPenaltyPerRadian * Mathf.Abs(skew);
+                if (score <= bestScore) continue;
+                best = measurement;
+                bestScore = score;
+            }
+            return best;
+        }
+
+        // Scans across the arm along the hand axis turned by `turn` and returns how many lines
+        // across the arm it found. skew: angle between the scanned axis and the arm it found.
+        static int MeasureAlong(ReadOnlySpan<byte> rgba, int width, int height, Vector2 wrist, Vector2 handAxis, float turn,
+            Vector3 handSkin, float pixelsPerMeter, out WristMeasurement measurement, out float skew)
+        {
+            measurement = default;
+            skew = 0;
+            var handPerpendicular = new Vector2(-handAxis.y, handAxis.x);
+            var axis = handAxis * Mathf.Cos(turn) + handPerpendicular * Mathf.Sin(turn);
             var perpendicular = new Vector2(-axis.y, axis.x);
             var maxHalfScan = Mathf.Min(MaxScanSteps - GradientSpan - BeyondEdgeSteps - 1, Mathf.RoundToInt(MaxHalfScanMeters * pixelsPerMeter));
 
             Span<float> distances = stackalloc float[ScanDistancesMeters.Length];
-            Span<float> laterals = stackalloc float[ScanDistancesMeters.Length];
-            Span<float> widths = stackalloc float[ScanDistancesMeters.Length];
+            Span<float> rights = stackalloc float[ScanDistancesMeters.Length];
+            Span<float> lefts = stackalloc float[ScanDistancesMeters.Length];
             Span<float> contrast = stackalloc float[MaxScanSteps];
             var count = 0;
+            var misses = 0;
             var lateralGuess = 0f;
-            var previousColor = SampleYcc(rgba, width, height, Vector2.Lerp(wrist, knuckle, 0.3f));
-            var previousWidth = 0f;
+            var previousColor = handSkin;
+            float brightRight = 0, brightLeft = 0;
 
-            // Lines must be found in order from the wrist; nothing beyond the first failure is
-            // trustworthy.
             foreach (var distance in ScanDistancesMeters)
             {
                 var center = wrist + axis * (distance * pixelsPerMeter) + perpendicular * lateralGuess;
                 if (!InBounds(center, width, height)) break;
 
+                // Past these the scan has left bare skin: a sleeve, a watch, another object. The
+                // hand is often lit differently from the arm, so only its hue has to carry over.
                 var color = SampleYcc(rgba, width, height, center);
-                if (ColorDistance(color, previousColor) > MaxCenterColorChange) break;
-                if (!TryFindEdge(rgba, width, height, center, perpendicular, color, maxHalfScan, contrast, out var right)) break;
-                if (!TryFindEdge(rgba, width, height, center, -perpendicular, color, maxHalfScan, contrast, out var left)) break;
+                if (count == 0 ? ChromaDistance(color, handSkin) > MaxHandChromaChange : ColorDistance(color, previousColor) > MaxCenterColorChange) break;
 
-                var lineWidth = (right + left) / pixelsPerMeter;
-                if (lineWidth < MinWidthMeters || lineWidth > MaxWidthMeters) break;
-                if (count > 0 && Mathf.Abs(lineWidth - previousWidth) > MaxWidthChange * previousWidth) break;
+                var left = 0f;
+                var found = TryFindEdge(rgba, width, height, center, perpendicular, color, maxHalfScan, contrast, out var right)
+                         && TryFindEdge(rgba, width, height, center, -perpendicular, color, maxHalfScan, contrast, out left);
+                var lineWidth = found ? (right + left) / pixelsPerMeter : 0f;
+                if (!found || lineWidth < MinWidthMeters || lineWidth > MaxWidthMeters)
+                {
+                    if (++misses >= MaxMissedLines) break;
+                    continue;
+                }
 
-                lateralGuess += (right - left) * 0.5f;
-                distances[count] = distance;
-                laterals[count] = lateralGuess / pixelsPerMeter;
-                widths[count] = lineWidth;
+                misses = 0;
+                brightRight += SampleYcc(rgba, width, height, center + perpendicular * (right * ShadingSampleFraction)).x;
+                brightLeft += SampleYcc(rgba, width, height, center - perpendicular * (left * ShadingSampleFraction)).x;
+                distances[count] = distance * pixelsPerMeter;
+                rights[count] = lateralGuess + right;
+                lefts[count] = lateralGuess - left;
                 count++;
+                lateralGuess += (right - left) * 0.5f;
                 previousColor = color;
-                previousWidth = lineWidth;
             }
 
-            if (count < 2) return default;
+            // One line gives no direction, but it still gives the width, which is all there is
+            // to go by when the arm leaves the frame just behind the wrist.
+            if (count < 1) return 0;
 
-            FitLine(distances, laterals, count, out var lateralAtWrist, out var bendSlope);
-            FitLine(distances, widths, count, out var widthAtWrist, out var widthGrowth);
-            if (Mathf.Abs(bendSlope) > MaxBendSlope) return default;
+            // A shadow, a tendon or a vein stops single lines short of the outline, never beyond
+            // it, so each side of the arm is the outer envelope of what the lines found.
+            float meanWidth = 0;
+            for (var i = 0; i < count; i++) meanWidth += (rights[i] - lefts[i]) / count;
+            var tolerance = Mathf.Max(MinEnvelopeTolerancePx, EnvelopeTolerance * meanWidth);
+            FitOuterLine(distances, rights, count, 1f, tolerance, out var rightAtWrist, out var rightSlope);
+            FitOuterLine(distances, lefts, count, -1f, tolerance, out var leftAtWrist, out var leftSlope);
 
-            widthGrowth = Mathf.Clamp(widthGrowth, 0f, MaxWidthGrowth);
-            var referenceWidth = Mathf.Clamp(
-                widthAtWrist + widthGrowth * WristMeasurement.ReferenceDistanceMeters, MinWidthMeters, MaxWidthMeters);
-            return new WristMeasurement(lateralAtWrist, Mathf.Atan(bendSlope), referenceWidth, widthGrowth);
+            var bendSlope = (rightSlope + leftSlope) * 0.5f;
+            if (Mathf.Abs(bendSlope) > MaxBendSlope) return 0;
+
+            // A line that crosses the arm at a slant is longer than the arm is wide.
+            skew = Mathf.Atan(bendSlope);
+            var widthGrowth = Mathf.Clamp(rightSlope - leftSlope, 0f, MaxWidthGrowth);
+            // Through the middle of the measured stretch, which stays right when the slope is clamped.
+            var middle = (distances[0] + distances[count - 1]) * 0.5f;
+            var reference = WristMeasurement.ReferenceDistanceMeters * pixelsPerMeter;
+            var widthAtMiddle = (rightAtWrist - leftAtWrist) + (rightSlope - leftSlope) * middle;
+            var referenceWidth = (widthAtMiddle + widthGrowth * (reference - middle)) * Mathf.Cos(skew);
+            if (referenceWidth < MinWidthMeters * pixelsPerMeter || referenceWidth > MaxWidthMeters * pixelsPerMeter) return 0;
+
+            measurement = new WristMeasurement(
+                perpendicular * ((rightAtWrist + leftAtWrist) * 0.5f),
+                (axis + perpendicular * bendSlope).normalized,
+                referenceWidth,
+                widthGrowth,
+                perpendicular * ((brightRight - brightLeft) / Mathf.Max(1f, brightRight + brightLeft)));
+            return count;
+        }
+
+        // Least-squares line through the points, refitted without those lying inside it.
+        // side: +1 when larger values are further out, -1 when smaller ones are.
+        static void FitOuterLine(ReadOnlySpan<float> x, ReadOnlySpan<float> y, int count, float side, float tolerance,
+            out float intercept, out float slope)
+        {
+            Span<bool> dropped = stackalloc bool[count];
+            var kept = count;
+
+            // The line nearest the hand can still cross the heel of the hand, which is wider than
+            // the arm: the one case of a point beyond the outline rather than short of it.
+            if (count > MinLinesWithoutHand)
+            {
+                dropped[0] = true;
+                FitLine(x, y, dropped, count, out intercept, out slope);
+                // Only lines that agree among themselves can say the first one is off.
+                var othersAgree = true;
+                for (var i = 1; i < count; i++) othersAgree &= Mathf.Abs(y[i] - (intercept + slope * x[i])) <= 2f * tolerance;
+                if (othersAgree && side * (y[0] - (intercept + slope * x[0])) > HandOutlierTolerances * tolerance) kept--;
+                else dropped[0] = false;
+            }
+
+            FitLine(x, y, dropped, count, out intercept, out slope);
+            for (var pass = 0; pass < EnvelopePasses && kept > 2; pass++)
+            {
+                var removed = 0;
+                for (var i = 0; i < count; i++)
+                {
+                    if (dropped[i] || side * (y[i] - (intercept + slope * x[i])) >= -tolerance) continue;
+                    if (kept - removed <= 2) break;
+                    dropped[i] = true;
+                    removed++;
+                }
+                if (removed == 0) break;
+                kept -= removed;
+                FitLine(x, y, dropped, count, out intercept, out slope);
+            }
         }
 
         // Walks outward from a point on the arm to its outline and returns the distance. Fails when
@@ -114,6 +228,7 @@ namespace BangleMe
                 steps = step;
             }
 
+            var darkEdge = 0;
             for (var step = GradientSpan; step <= steps; step++)
             {
                 if (contrast[step] < MinEdgeContrast) continue;
@@ -122,18 +237,29 @@ namespace BangleMe
 
                 var beyond = SampleYcc(rgba, width, height, start + direction * (step + GradientSpan + BeyondEdgeSteps)) - armColor;
                 var chromaChange = Mathf.Sqrt(beyond.y * beyond.y + beyond.z * beyond.z);
-                if (chromaChange >= MinChromaChange || Mathf.Abs(beyond.x) >= MinLumaChange)
+                if (chromaChange >= MinChromaChange || beyond.x >= MinLumaChange)
                 {
                     edge = step;
                     return true;
                 }
+                // Much darker but still skin-colored is usually the arm's own shadow side, with
+                // the outline further out; it is the outline only if nothing better follows.
+                if (darkEdge == 0 && beyond.x <= -MinLumaChange) darkEdge = step;
             }
-            return false;
+
+            edge = darkEdge;
+            return darkEdge > 0;
         }
 
         static bool InBounds(Vector2 point, int width, int height)
         {
             return point.x >= 1f && point.y >= 1f && point.x < width - 1 && point.y < height - 1;
+        }
+
+        static float ChromaDistance(Vector3 a, Vector3 b)
+        {
+            var d = a - b;
+            return Mathf.Sqrt(d.y * d.y + d.z * d.z);
         }
 
         static float ColorDistance(Vector3 a, Vector3 b)
@@ -168,19 +294,22 @@ namespace BangleMe
                 128f + 0.5f * r - 0.418688f * g - 0.081312f * b);
         }
 
-        static void FitLine(ReadOnlySpan<float> x, ReadOnlySpan<float> y, int count, out float intercept, out float slope)
+        static void FitLine(ReadOnlySpan<float> x, ReadOnlySpan<float> y, ReadOnlySpan<bool> dropped, int count, out float intercept, out float slope)
         {
             float sumX = 0, sumY = 0, sumXx = 0, sumXy = 0;
+            var used = 0;
             for (var i = 0; i < count; i++)
             {
+                if (dropped[i]) continue;
                 sumX += x[i];
                 sumY += y[i];
                 sumXx += x[i] * x[i];
                 sumXy += x[i] * y[i];
+                used++;
             }
-            var denominator = count * sumXx - sumX * sumX;
-            slope = Mathf.Abs(denominator) > 1e-12f ? (count * sumXy - sumX * sumY) / denominator : 0f;
-            intercept = (sumY - slope * sumX) / count;
+            var denominator = used * sumXx - sumX * sumX;
+            slope = Mathf.Abs(denominator) > 1e-6f ? (used * sumXy - sumX * sumY) / denominator : 0f;
+            intercept = (sumY - slope * sumX) / used;
         }
     }
 }

@@ -32,10 +32,12 @@ namespace BangleMe.Editor
             AssetDatabase.Refresh();
 
             ConfigureRenderPipeline();
+            ConfigureLayers();
             var designMaterials = new Material[BraceletDesign.Catalog.Length];
             for (var i = 0; i < designMaterials.Length; i++) designMaterials[i] = CreateDesignMaterial(BraceletDesign.Catalog[i]);
             var occluderMaterial = CreateMaterial("Arm Occluder", "BangleMe/DepthOccluder");
             var backgroundMaterial = CreateMaterial("Camera Background", "BangleMe/CameraBackground");
+            var compositeMaterial = CreateMaterial("Bracelet Composite", "BangleMe/BraceletComposite");
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
@@ -43,7 +45,8 @@ namespace BangleMe.Editor
             RenderSettings.ambientMode = AmbientMode.Flat;
             RenderSettings.ambientLight = new Color(0.2f, 0.2f, 0.2f);
             RenderSettings.defaultReflectionMode = DefaultReflectionMode.Custom;
-            RenderSettings.customReflectionTexture = ImportEnvironment();
+            var studio = ImportEnvironment();
+            RenderSettings.customReflectionTexture = studio;
 
             var lightObject = new GameObject("Key Light");
             lightObject.transform.rotation = Quaternion.Euler(40f, -30f, 0f);
@@ -74,6 +77,31 @@ namespace BangleMe.Editor
             var rig = cameraObject.AddComponent<ArCameraRig>();
             Assign(rig, ("renderCamera", camera), ("background", backgroundRenderer));
 
+            // The bracelets are drawn by a camera of their own and laid over the camera image by
+            // a quad in front of the scene camera.
+            camera.cullingMask = ~(1 << RenderLayers.Bracelets);
+            var layerObject = new GameObject("Bracelet Layer");
+            layerObject.transform.SetParent(cameraObject.transform, false);
+            var layerCamera = layerObject.AddComponent<Camera>();
+            layerCamera.clearFlags = CameraClearFlags.SolidColor;
+            layerCamera.backgroundColor = Color.clear;
+            layerCamera.cullingMask = (1 << RenderLayers.Bracelets) | (1 << RenderLayers.ArmOccluder);
+            layerCamera.allowHDR = false;
+
+            var composite = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            composite.name = "Bracelet Composite";
+            Object.DestroyImmediate(composite.GetComponent<Collider>());
+            composite.transform.SetParent(cameraObject.transform, false);
+            composite.transform.localPosition = new Vector3(0f, 0f, 1f);
+            composite.transform.localScale = new Vector3(100f, 100f, 1f);
+            var compositeRenderer = composite.GetComponent<MeshRenderer>();
+            compositeRenderer.sharedMaterial = compositeMaterial;
+            compositeRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            compositeRenderer.receiveShadows = false;
+
+            var braceletLayer = layerObject.AddComponent<BraceletLayer>();
+            Assign(braceletLayer, ("sceneCamera", camera), ("composite", compositeRenderer));
+
             var stackObject = new GameObject("Bracelets");
             stackObject.transform.SetParent(cameraObject.transform, false);
             var stack = stackObject.AddComponent<BraceletStack>();
@@ -83,12 +111,15 @@ namespace BangleMe.Editor
             var app = new GameObject("App");
             var feed = app.AddComponent<CameraFeed>();
             Assign(feed, ("blitShader", Shader.Find("Hidden/BangleMe/CameraBlit")));
+            var reflection = app.AddComponent<SceneReflection>();
+            Assign(reflection, ("shader", Shader.Find("Hidden/BangleMe/SceneReflection")), ("studio", studio));
             var pipeline = app.AddComponent<WristTrackingPipeline>();
             Assign(pipeline,
                 ("cameraFeed", feed),
                 ("cameraRig", rig),
                 ("braceletStack", stack),
                 ("keyLight", light),
+                ("sceneReflection", reflection),
                 ("handLandmarkerModel", AssetDatabase.LoadAssetAtPath<TextAsset>(Root + "/Models/hand_landmarker.bytes")));
 
             var ui = new GameObject("UI");
@@ -136,6 +167,15 @@ namespace BangleMe.Editor
                 asset.renderScale = 1f;
                 EditorUtility.SetDirty(asset);
             }
+        }
+
+        static void ConfigureLayers()
+        {
+            var tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+            var layers = tagManager.FindProperty("layers");
+            layers.GetArrayElementAtIndex(RenderLayers.Bracelets).stringValue = RenderLayers.BraceletsName;
+            layers.GetArrayElementAtIndex(RenderLayers.ArmOccluder).stringValue = RenderLayers.ArmOccluderName;
+            tagManager.ApplyModifiedPropertiesWithoutUndo();
         }
 
         static PanelSettings CreatePanelSettings()
@@ -194,6 +234,18 @@ namespace BangleMe.Editor
                 material.EnableKeyword("_OCCLUSIONMAP");
             }
 
+            else
+            {
+                // Plain bands and twisted wire: fine polishing scratches, and darkening toward
+                // the band's edges or into the groove between the wires.
+                material.SetTexture("_BumpMap", PatternTextures.GetOrCreateBrushedNormal(TexturesPath));
+                material.SetFloat("_BumpScale", 0.3f);
+                material.EnableKeyword("_NORMALMAP");
+                material.SetTexture("_OcclusionMap", PatternTextures.GetOrCreateEdgeOcclusion(TexturesPath));
+                material.SetFloat("_OcclusionStrength", 1f);
+                material.EnableKeyword("_OCCLUSIONMAP");
+            }
+
             EditorUtility.SetDirty(material);
             return material;
         }
@@ -212,7 +264,12 @@ namespace BangleMe.Editor
             }
             else
             {
-                material.shader = shader;
+                // A material asset keeps the values it was saved with, so a default changed in the
+                // shader would never reach it: start again from the shader's own defaults.
+                var fresh = new Material(shader);
+                EditorUtility.CopySerialized(fresh, material);
+                material.name = name;
+                Object.DestroyImmediate(fresh);
             }
             return material;
         }

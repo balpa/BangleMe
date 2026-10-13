@@ -54,6 +54,25 @@ namespace BangleMe.Tests
             Assert.AreEqual(0.9f, pose.Confidence);
         }
 
+        // The tracker's metric hand never matches the image exactly; whatever the fit does with
+        // the rest of the hand, the wrist has to land on its own image point.
+        [Test]
+        public void MismatchedHand_KeepsTheWristOnItsImagePoint()
+        {
+            var hand = UprightHand();
+            var image = Project(hand, new Vector3(0.05f, -0.02f, 0.4f));
+            image[HandLandmark.Wrist] += new Vector2(0.02f, 0.03f);
+            var solver = new WristPoseSolver(FocalLengthPx, ImageSize);
+
+            var pose = solver.Solve(image, hand, 0.9f);
+
+            var projected = new Vector2(
+                FocalLengthPx * pose.Position.x / pose.Position.z / ImageSize.x + 0.5f,
+                -FocalLengthPx * pose.Position.y / pose.Position.z / ImageSize.y + 0.5f);
+            Assert.AreEqual(image[HandLandmark.Wrist].x, projected.x, 0.0005f);
+            Assert.AreEqual(image[HandLandmark.Wrist].y, projected.y, 0.0005f);
+        }
+
         [Test]
         public void HandToRight_YieldsPositiveX()
         {

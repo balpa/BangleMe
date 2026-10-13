@@ -8,6 +8,7 @@ namespace BangleMe
         // Every bracelet mesh is built around local +Y with its inner surface at this radius; the
         // stack scales it radially to the measured wrist.
         public const float ReferenceInnerRadius = 0.03f;
+        const float StrandSurfaceRepeats = 4f;
 
         public static Mesh Create(BraceletDesign design, bool highDetail)
         {
@@ -29,6 +30,7 @@ namespace BangleMe
             var rows = tubeSegments + 1;
             var vertices = new List<Vector3>(design.StrandCount * columns * rows);
             var normals = new List<Vector3>(vertices.Capacity);
+            var uvs = new List<Vector2>(vertices.Capacity);
             var triangles = new List<int>(design.StrandCount * ringSegments * tubeSegments * 6);
 
             for (var strand = 0; strand < design.StrandCount; strand++)
@@ -45,6 +47,8 @@ namespace BangleMe
                     tangent /= Mathf.Sqrt(tangent.sqrMagnitude);
 
                     var outward = new Vector3(Mathf.Cos(ringAngle), 0f, Mathf.Sin(ringAngle));
+                    var twist = design.Twists * ringAngle + phase;
+                    var awayFromCore = outward * Mathf.Cos(twist) + Vector3.up * Mathf.Sin(twist);
                     var side = Vector3.Cross(tangent, outward);
                     side /= Mathf.Sqrt(side.sqrMagnitude);
                     var up = Vector3.Cross(side, tangent);
@@ -55,6 +59,9 @@ namespace BangleMe
                         var normal = up * Mathf.Cos(tubeAngle) + side * Mathf.Sin(tubeAngle);
                         vertices.Add(center + normal * strandRadius);
                         normals.Add(normal);
+                        // V runs from the groove between the strands (0) to the strand's outer
+                        // face (0.5): the half of the occlusion map that goes from dark to light.
+                        uvs.Add(new Vector2(i / (float)ringSegments * StrandSurfaceRepeats, 0.25f + 0.25f * Vector3.Dot(normal, awayFromCore)));
                     }
                 }
                 AddGrid(triangles, firstVertex, ringSegments, tubeSegments, rows);
@@ -63,7 +70,9 @@ namespace BangleMe
             var mesh = new Mesh();
             mesh.SetVertices(vertices);
             mesh.SetNormals(normals);
+            mesh.SetUVs(0, uvs);
             mesh.SetTriangles(triangles, 0);
+            mesh.RecalculateTangents();
             return mesh;
         }
 

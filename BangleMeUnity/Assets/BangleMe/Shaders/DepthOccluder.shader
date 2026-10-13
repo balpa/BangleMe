@@ -4,9 +4,15 @@ Shader "BangleMe/DepthOccluder"
 {
     Properties
     {
-        _ShadowColor ("Shadow Color", Color) = (0.42, 0.27, 0.22, 1)
-        _ShadowStrength ("Shadow Strength", Range(0, 1)) = 0.55
+        _ShadowColor ("Shadow Color", Color) = (0.30, 0.17, 0.11, 1)
+        _ShadowStrength ("Shadow Strength", Range(0, 1)) = 0.4
+        // Skin under the stack sees almost none of the room past the bangles.
+        _CoveredStrength ("Shadow Strength Under The Stack", Range(0, 1)) = 0.93
         _ShadowFalloff ("Shadow Falloff (m)", Float) = 0.007
+        // How many times longer the shadow gets on the side of the stack away from the light.
+        _CastLength ("Cast Shadow Length", Float) = 1.5
+        // Along the arm toward the elbow, how much the light comes from that side (-1..1).
+        _LightAlong ("Light Along Arm", Float) = 0
         // Extent of the bracelet stack along the arm, set per frame.
         _StackStart ("Stack Start", Float) = 0
         _StackEnd ("Stack End", Float) = 0
@@ -29,9 +35,12 @@ Shader "BangleMe/DepthOccluder"
             CBUFFER_START(UnityPerMaterial)
                 half4 _ShadowColor;
                 half _ShadowStrength;
+                half _CoveredStrength;
                 float _ShadowFalloff;
                 float _StackStart;
                 float _StackEnd;
+                float _CastLength;
+                float _LightAlong;
             CBUFFER_END
 
             struct Varyings
@@ -54,13 +63,19 @@ Shader "BangleMe/DepthOccluder"
 
             half4 frag(Varyings input) : SV_Target
             {
-                float outside = max(max(_StackStart - input.along, input.along - _StackEnd), 0.0);
-                half shadow = 1.0 - smoothstep(0.0, _ShadowFalloff, outside);
+                // The stack throws its shadow down the arm, away from the light.
+                float towardHand = _StackStart - input.along;
+                float towardElbow = input.along - _StackEnd;
+                float outside = max(max(towardHand, towardElbow), 0.0);
+                float cast = towardHand > 0.0 ? saturate(_LightAlong) : saturate(-_LightAlong);
+                half shadow = 1.0 - smoothstep(0.0, _ShadowFalloff * (1.0 + _CastLength * cast), outside);
 
                 // The stand-in only approximates the arm's outline; fading toward its silhouette
                 // keeps the shadow off the background when it is slightly too wide.
                 half facing = saturate(dot(normalize(input.normalWS), normalize(GetCameraPositionWS() - input.positionWS)));
-                shadow *= smoothstep(0.15, 0.7, facing) * _ShadowStrength;
+                // Deepest well inside the stack; its first bangles sit loose and let light in.
+                half covered = smoothstep(0.0, _ShadowFalloff, min(input.along - _StackStart, _StackEnd - input.along));
+                shadow *= smoothstep(0.15, 0.7, facing) * lerp(_ShadowStrength, _CoveredStrength, covered);
 
                 return half4(lerp(half3(1, 1, 1), _ShadowColor.rgb, shadow), 1);
             }

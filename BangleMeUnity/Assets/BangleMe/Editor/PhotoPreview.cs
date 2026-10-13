@@ -24,6 +24,13 @@ namespace BangleMe.Editor
                 Render(DefaultPhotoPath, $"design{design}", new[] { design, design, design });
             }
 
+            var thinSet = new int[49];
+            for (var i = 0; i < thinSet.Length; i++) thinSet[i] = BraceletDesign.ThinSetDesign(i + 1);
+            Render(DefaultPhotoPath, "set", thinSet);
+
+            var flatSet = new int[48];
+            for (var i = 0; i < flatSet.Length; i++) flatSet[i] = BraceletDesign.Catalog.Length - 1;
+
             var mixed = new int[24];
             for (var i = 0; i < mixed.Length; i++) mixed[i] = i % BraceletDesign.Catalog.Length;
             Render(DefaultPhotoPath, "mixed", mixed);
@@ -33,11 +40,15 @@ namespace BangleMe.Editor
             foreach (var photo in Directory.GetFiles(ExtraPhotosDirectory))
             {
                 var extension = Path.GetExtension(photo).ToLowerInvariant();
-                if (extension == ".jpg" || extension == ".jpeg" || extension == ".png") Render(photo, "mixed", few);
+                if (extension != ".jpg" && extension != ".jpeg" && extension != ".png") continue;
+                Render(photo, "mixed", few);
+                Render(photo, "set", thinSet);
+                for (var finish = 1; finish < BraceletFinish.Catalog.Length; finish++) Render(photo, $"set_finish{finish}", thinSet, finish);
+                Render(photo, "flat_rose", flatSet, 1);
             }
         }
 
-        static void Render(string photoPath, string label, int[] designs)
+        static void Render(string photoPath, string label, int[] designs, int finish = 0)
         {
             EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
             var rig = Object.FindFirstObjectByType<ArCameraRig>();
@@ -54,6 +65,9 @@ namespace BangleMe.Editor
             camera.targetTexture = target;
             rig.Configure(photo);
 
+            foreach (var design in designs) stack.Add(design);
+            stack.FinishIndex = finish;
+
             var observation = new HandObservation();
             var fit = default(WristFit);
             var found = false;
@@ -64,17 +78,20 @@ namespace BangleMe.Editor
                     var solver = new WristPoseSolver(rig.FocalLengthPx, new Vector2(photo.width, photo.height));
                     var pose = solver.Solve(observation.ImagePoints, observation.WorldPoints, observation.Confidence);
                     var measurement = WristMeasurer.Measure(pixels.AsReadOnlySpan(), width, height, observation.ImagePoints, observation.WorldPoints);
-                    fit = new WristFitEstimator().Estimate(pose, measurement, 0);
+                    var pipeline = Object.FindFirstObjectByType<WristTrackingPipeline>();
+                    pipeline.MatchSceneLighting(pixels.AsReadOnlySpan(), measurement, 1f);
+                    fit = new WristFitEstimator().Estimate(pose, measurement, 0, rig.FocalLengthPx * width / photo.width);
+                    pipeline.RefreshReflections(photo, fit);
                     found = pose.Confidence > 0;
-                    Debug.Log($"[BangleMe] {label}: measured={measurement.Valid} width={measurement.WidthMeters * 1000f:0.0}mm " +
-                              $"lateral={measurement.LateralMeters * 1000f:0.0}mm bend={measurement.BendRadians * Mathf.Rad2Deg:0.0}deg " +
-                              $"halfWidth={fit.HalfWidth * 1000f:0.0}mm growth={fit.GrowthPerMeter:0.00}/m");
+                    Debug.Log($"[BangleMe] {label}: measured={measurement.Valid} width={measurement.Width:0.0}px offset={measurement.Offset} " +
+                              $"direction={measurement.Direction} shading={measurement.Shading} halfWidth={fit.HalfWidth * 1000f:0.0}mm growth={fit.GrowthPerMeter:0.00}/m");
                 }
             }
 
-            foreach (var design in designs) stack.Add(design);
-            if (found) stack.Apply(fit, true);
+            // Long enough for the bangles to come to rest where they would on this arm.
+            if (found) stack.Apply(fit, true, 3f);
 
+            Object.FindFirstObjectByType<BraceletLayer>().RenderNow();
             camera.Render();
 
             var previous = RenderTexture.active;
@@ -87,12 +104,117 @@ namespace BangleMe.Editor
             Directory.CreateDirectory(OutputDirectory);
             File.WriteAllBytes($"{OutputDirectory}/{Path.GetFileNameWithoutExtension(photoPath)}_{label}.png", capture.EncodeToPNG());
 
+            SaveScene(camera, stack, $"{OutputDirectory}/{Path.GetFileNameWithoutExtension(photoPath)}_{label}_scene.json");
+            SaveCoverage(Object.FindFirstObjectByType<BraceletLayer>().Texture as RenderTexture,
+                $"{OutputDirectory}/{Path.GetFileNameWithoutExtension(photoPath)}_{label}_mask.png");
+
             camera.targetTexture = null;
             Object.DestroyImmediate(capture);
             Object.DestroyImmediate(target);
             Object.DestroyImmediate(photo);
             // Leaves the scene on disk untouched: the bracelets spawned above are preview-only.
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        }
+
+        // Which pixels the bracelets cover, for anything that reworks only those.
+        static void SaveCoverage(RenderTexture layer, string path)
+        {
+            if (layer == null) return;
+            var previous = RenderTexture.active;
+            RenderTexture.active = layer;
+            var pixels = new Texture2D(layer.width, layer.height, TextureFormat.RGBA32, false);
+            pixels.ReadPixels(new Rect(0, 0, layer.width, layer.height), 0, 0);
+            RenderTexture.active = previous;
+
+            var colors = pixels.GetPixels32();
+            for (var index = 0; index < colors.Length; index++)
+            {
+                var coverage = colors[index].a;
+                colors[index] = new Color32(coverage, coverage, coverage, 255);
+            }
+            pixels.SetPixels32(colors);
+            pixels.Apply();
+            File.WriteAllBytes(path, pixels.EncodeToPNG());
+            Object.DestroyImmediate(pixels);
+        }
+
+        [System.Serializable]
+        sealed class SceneExport
+        {
+            public float verticalFovDegrees;
+            public int width;
+            public int height;
+            public Vector3 towardLight;
+            public Color metal;
+            public RingExport[] rings;
+            public int armColumns;
+            public Vector3[] armVertices;
+        }
+
+        [System.Serializable]
+        sealed class RingExport
+        {
+            public string design;
+            public Vector3 center;
+            public Vector3 axis;
+            public float innerRadius;
+            public float width;
+            public float thickness;
+        }
+
+        // Where everything sits as the camera sees it, for an offline renderer to draw the same
+        // bracelets on the same photo.
+        static void SaveScene(Camera camera, BraceletStack stack, string path)
+        {
+            var view = camera.transform;
+            var rings = new System.Collections.Generic.List<RingExport>();
+            var export = new SceneExport
+            {
+                verticalFovDegrees = camera.fieldOfView,
+                width = camera.pixelWidth,
+                height = camera.pixelHeight,
+                towardLight = view.InverseTransformDirection(stack.transform.parent.TransformDirection(stack.LightDirection)),
+                metal = stack.FinishColor,
+            };
+
+            foreach (var renderer in stack.GetComponentsInChildren<MeshRenderer>())
+            {
+                if (!renderer.enabled) continue;
+                var mesh = renderer.GetComponent<MeshFilter>().sharedMesh;
+                if (renderer.gameObject.layer == RenderLayers.ArmOccluder)
+                {
+                    var vertices = mesh.vertices;
+                    for (var i = 0; i < vertices.Length; i++) vertices[i] = view.InverseTransformPoint(renderer.transform.TransformPoint(vertices[i]));
+                    export.armVertices = vertices;
+                    export.armColumns = ArmColumns(vertices.Length);
+                    continue;
+                }
+
+                var design = System.Array.Find(BraceletDesign.Catalog, candidate => candidate.Name == mesh.name);
+                rings.Add(new RingExport
+                {
+                    design = mesh.name,
+                    center = view.InverseTransformPoint(renderer.transform.position),
+                    axis = view.InverseTransformDirection(renderer.transform.up),
+                    innerRadius = BraceletMeshFactory.ReferenceInnerRadius * renderer.transform.lossyScale.x,
+                    width = design.Width,
+                    thickness = design.Thickness,
+                });
+            }
+
+            export.rings = rings.ToArray();
+            File.WriteAllText(path, JsonUtility.ToJson(export));
+        }
+
+        // The arm stand-in is a grid whose rows run along the arm; its column count is whichever
+        // divisor of the vertex count the mesh was built with.
+        static int ArmColumns(int vertexCount)
+        {
+            for (var columns = 40; columns > 2; columns--)
+            {
+                if (vertexCount % columns == 0) return columns;
+            }
+            return vertexCount;
         }
     }
 }

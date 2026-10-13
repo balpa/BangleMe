@@ -4,7 +4,7 @@ namespace BangleMe
 {
     // The forearm as the bracelets need it: a tapered elliptic tube in camera space.
     // Position is on the arm's center line level with the wrist joint; local +Y runs toward the
-    // elbow, local +X spans the wrist's wide side and local +Z its thin side.
+    // elbow, local +X spans the width the camera sees and local +Z points at the camera.
     public readonly struct WristFit
     {
         public readonly Vector3 Position;

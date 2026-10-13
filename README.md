@@ -24,9 +24,11 @@ Editor menu `BangleMe`:
 
 Tests: Window → General → Test Runner, or `unity test BangleMeUnity --mode EditMode` / `--mode PlayMode`. The PlayMode test runs the real scene on a photo and writes screenshots with the UI to `Logs/BangleMePreview/`. Command-line runs need the project closed in the Editor.
 
-How it fits the wrist: MediaPipe gives the hand's 21 landmarks; `WristMeasurer` then finds the forearm's edges in the camera image behind the wrist, so the bracelets take the arm's real width, direction and taper (`WristFitEstimator`). Up to 50 bracelets stack from the wrist toward the elbow.
+How it fits the wrist: MediaPipe gives the hand's 21 landmarks; `WristMeasurer` then finds the forearm's edges in the camera image behind the wrist, so the bracelets take the arm's real width, direction and taper (`WristFitEstimator`). The measurement stays in image pixels and the bangles face the camera, so what is drawn lands on the pixels that were measured. Up to 50 bracelets stack from the wrist toward the elbow; `+12` adds a set of the last design, and `StackJitter` lets the bangles lean and differ slightly like a real stack.
 
-Bracelet designs (`BraceletDesign.Catalog`) are generated in code: twisted-wire burma, and swept bands (ajda, hasır, tıraşlı, düz) detailed by generated normal maps.
+How it sits in the picture: the reflection environment is built from the camera image (`SceneReflection`), the main light's side is read off the arm's own shading, and the bracelets are drawn into their own layer and composited slightly blurred and grainy to match the camera (`BraceletLayer`).
+
+Bracelet designs (`BraceletDesign.Catalog`) are generated in code: twisted-wire burma, and swept bands (ajda, hasır, tıraşlı, düz, ince) detailed by generated normal maps.
 
 Credits: reflection environment `Assets/BangleMe/Environment/Studio.hdr` is "Studio Small 09" from Poly Haven (CC0). Test photos are from the MediaPipe sample assets.
 
